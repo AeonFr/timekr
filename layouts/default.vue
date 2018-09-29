@@ -18,15 +18,48 @@ export default {
 </script>
 
 <style>
-html{
-  color: #a0a0a0;
-  background-color: #222222;
-}
+  html{
+    color: #a0a0a0;
+    background-color: #222222;
+  }
 
-:focus:not(:focus-visible) { outline: none }
+  :focus:not(:focus-visible) { outline: none }
 
-.container {
-  @apply my-6 mx-auto;
-}
+  .container {
+    @apply my-6 mx-auto;
+  }
+
+  .btn {
+    @apply border tracking-wide uppercase py-2 px-4 rounded-full;
+  }
+  .btn-primary {
+    @apply text-blue;
+  }
+  .btn-primary:hover {
+    @apply bg-blue-darkest;
+  }
+  .btn-danger{
+    @apply text-red border-transparent;
+  }
+  .btn-danger:hover{
+    @apply bg-red-darkest;
+  }
+  .btn-default{
+    @apply text-grey-darker border-transparent;
+  }
+  .btn-default:hover{
+    @apply bg-grey-darkest;
+  }
+  .btn-tab{
+    /*border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;*/
+    border-bottom-color: transparent!important;
+  }
+  .input{
+    @apply text-grey appearance-none bg-transparent w-full py-1 px-2 leading-tight;
+  }
+  .input:focus{
+    @apply outline-none;
+  }
 </style>
 

@@ -273,17 +273,3 @@ export default {
 }
 
 </script>
-
-<style>
-  .btn-tab{
-    /*border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;*/
-    border-bottom-color: transparent!important;
-  }
-  .input{
-    @apply text-grey appearance-none bg-transparent w-full py-1 px-2 leading-tight;
-  }
-  .input:focus{
-    @apply outline-none;
-  }
-</style>

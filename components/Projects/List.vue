@@ -64,27 +64,3 @@ export default {
   }
 }
 </script>
-
-<style>
-  .btn {
-    @apply border tracking-wide uppercase py-2 px-4 rounded-full;
-  }
-  .btn-primary {
-    @apply text-blue;
-  }
-  .btn-primary:hover {
-    @apply bg-blue-darkest;
-  }
-  .btn-danger{
-    @apply text-red border-transparent;
-  }
-  .btn-danger:hover{
-    @apply bg-red-darkest;
-  }
-  .btn-default{
-    @apply text-grey-darker border-transparent;
-  }
-  .btn-default:hover{
-    @apply bg-grey-darkest;
-  }
-</style>
