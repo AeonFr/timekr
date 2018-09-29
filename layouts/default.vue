@@ -1,55 +1,32 @@
 <template>
-  <div>
-    <nuxt/>
-  </div>
+  <section class="container font-sans">
+    <div class="m:flex mb-4">
+      <projects class="w-full m:w-1/3 px-2"/>
+      <nuxt class="w-full m:w-2/3 px-4 mt-4"/>
+    </div>
+  </section>
 </template>
 
+<script>
+import Projects from '~/components/Projects/List.vue'
+
+export default {
+  components: {
+    Projects,
+  }
+}
+</script>
+
 <style>
-html {
-  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 16px;
-  word-spacing: 1px;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
+html{
+  color: #a0a0a0;
+  background-color: #222222;
 }
 
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-  margin: 0;
-}
+:focus:not(:focus-visible) { outline: none }
 
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
-}
-
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
-}
-
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
-}
-
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
+.container {
+  @apply my-6 mx-auto;
 }
 </style>
+
