@@ -46,6 +46,7 @@ export default {
       return ("0" + num).slice(-2)
     },
     startTimer() {
+      if (this.time == 0) this.time = 1500;
       this.timerStopped = false;
       window.setTimeout(this.tick,1000);
     },
