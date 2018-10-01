@@ -48,7 +48,7 @@ const createStore = () => {
 
         let assign = {};
         assign[project_id] = Object.assign(state.projects[project_id], {
-          time: Number(state.projects[project_id].time) + Number(amount),
+          time: parseInt(state.projects[project_id].time) + parseInt(amount),
           updated_at: + new Date()
         });
 
