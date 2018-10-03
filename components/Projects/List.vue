@@ -1,7 +1,7 @@
 <template>
   <div>
     
-    <h1 class="border-b text-xl tracking-wide uppercase font-light leading-loose">
+    <h1 class="text-xl tracking-wide uppercase font-light leading-loose">
       Projects
     </h1>
 
@@ -11,7 +11,8 @@
         :key="slug">
         <nuxt-link
           :to="'/project/' + slug"
-          class="no-underline block text-grey p-2 bg-grey-darkest hover:bg-grey-darker">
+          :class="{ 'border-l-2 border-blue': (slug == $route.params.slug) }"
+          class="no-underline block text-1 p-2 bg-1 hover:bg-2">
           {{ project.name }}
         </nuxt-link>
       </li>
@@ -23,7 +24,7 @@
       <div class="flex items-center py-2">
         <input
           v-model="newProjectName"
-          :class="{ 'bg-red-darkest': invalidProjectName }"
+          :class="{ 'input-error': invalidProjectName }"
           class="input mr-2"
           type="text"
           placeholder="New project's name"

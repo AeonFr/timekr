@@ -1,6 +1,6 @@
 <template>
-  <div class="block my-3 p-4 shadow-lg bg-black rounded-lg text-center">
-    <div class="m:inline-block mb-4 m:mb-0 px-4 text-3xl text-grey font-mono">
+  <div class="block my-3 p-4 shadow-md bg-1 rounded-lg text-center">
+    <div class="m:inline-block mb-4 m:mb-0 px-4 text-3xl text-1 font-mono">
       {{ prettyTime }}
     </div>
 

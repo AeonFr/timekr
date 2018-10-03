@@ -6,17 +6,17 @@
     <div v-else>
       <h1
         v-if="!editingProjectName"
-        class="font-light border-b border-transparent hover:border-blue"
+        class="pb-3 font-light border-b border-transparent hover:border-blue"
         @click="editingProjectName = true">
         {{ project.name || $route.params.slug }}
       </h1>
       <form
         v-else
-        class="flex items-center border-b border-b-2"
+        class="pb-3 flex items-center border-b border-b-2"
         @submit.prevent="editProjectName">
         <input
           v-model="newProjectName"
-          :class="{ 'bg-red-darkest': invalidProjectName }"
+          :class="{ 'input-error': invalidProjectName }"
           class="input mr-3"
           type="text"
           placeholder="New Name"
@@ -33,31 +33,6 @@
           Cancel
         </button>
       </form>
-
-      <section
-        id="stats"
-        class="my-4 m:flex justify-center text-lg text-center">
-        <div class="leading-normal px-4">
-          <div class="text-grey text-2xl">{{ prettyTotal }}</div>
-          <div class="text-sm">Time commited</div>
-        </div>
-        <div
-          v-if="project.time_budget"
-          class="leading-normal px-4">
-          <div class="text-grey text-2xl">{{ timeBudget }}%</div>
-          <div class="text-sm">
-            Of the time budget
-          </div>
-        </div>
-        <div
-          v-if="project.deadline"
-          class="leading-normal px-4">
-          <div class="text-grey text-2xl">{{ prettyDate(project.deadline, 'day') }}</div>
-          <div class="text-sm">
-            Next deadline {{ nextDeadline }}
-          </div>
-        </div>
-      </section>
       
       <pomodoro-timer @commitTime="commitTime"/>
 
@@ -88,41 +63,40 @@
       </form>
 
 
-      <section class="text-left mt-4">
-        <h2 class="leading-loose">Commit History</h2>
-        <div class="list-reset">
-          <div
-            v-if="project.commits.length == 0"
-            class="text-sm leading-normal">
-            There are no commits yet. Start the pomodoro timer
-            or commit time manually to start tracking time spent in this project.
-            <br>
-            Time tracked with the pomodoro timer will
-            appear here once the timer gets to 0.
+      <section
+        id="stats"
+        class="my-4 m:flex justify-center text-lg text-center">
+        <div class="leading-normal px-4">
+          <div class="text-1 text-2xl">{{ prettyTotal }}</div>
+          <div class="text-sm">Time commited</div>
+        </div>
+        <div
+          v-if="project.time_budget"
+          class="leading-normal px-4">
+          <div class="text-1 text-2xl">{{ timeBudget }}%</div>
+          <div class="text-sm">
+            Of the time budget
           </div>
-          <div
-            v-for="(commit, i) in project.commits"
-            :key="i">
-            <h3
-              v-if="!project.commits[i-1]
-                || prettyDate(project.commits[i-1].commited_at, 'day')
-              != prettyDate(commit.commited_at, 'day')"
-              class="leading-loose font-light">
-              {{ prettyDate(commit.commited_at, 'day') }}
-            </h3>
-            <li class="p-2 bg-grey-darkest">
-              <span class="text-grey">{{ commit.amount }}</span>
-              minutes commited at
-              <span class="text-grey">{{ prettyDate(commit.commited_at, 'minutes') }}</span>
-            </li>
+        </div>
+        <div
+          v-if="project.deadline"
+          class="leading-normal px-4">
+          <div class="text-1 text-2xl">{{ prettyDate(project.deadline, 'day') }}</div>
+          <div class="text-sm">
+            Next deadline {{ nextDeadline }}
           </div>
         </div>
       </section>
 
-      <div class="mt-4 text-left">
-        <h2 class="leading-loose">Project Settings</h2>
+      <div class="mv-4 text-left">
+        
+        <nuxt-link
+          :to="'/project/' + $route.params.slug + '/commits'"
+          class="btn btn-default mt-4 no-underline inline-block">
+          Commit History
+        </nuxt-link>
+        <br>
         <button
-          :class="{ 'btn-tab': showEditProjectSettings, }"
           class="btn btn-primary mt-4"
           @click="showEditProjectSettings = 1">
           Edit Project Settings
@@ -136,7 +110,7 @@
 
       <form
         v-if="showEditProjectSettings"
-        class="p-2 border border-t-0 border-grey-darkest rounded-lg rounded-t-none text-left"
+        class="my-2 p-2 bg-1 shadow-md rounded-lg text-left"
         @submit.prevent="editProjectSettings">
         <div class="mt-2">
           <label
@@ -224,7 +198,7 @@ export default {
       return this.twoDigits(Math.floor(amount/60)) + ':' + this.twoDigits(amount % 60);
     },
     prettyDate(time, format){
-      return moment(time).format( format == 'minutes' ? 'LTS' : 'LL');
+      return moment(time).format( format == 'minutes' ? 'LTS' : 'L');
     },
     editProjectName(){
       if (!this.newProjectName)
