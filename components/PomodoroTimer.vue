@@ -61,8 +61,10 @@ export default {
       if (this.time > 0 && !this.timerStopped) {
         this.time--;
         window.setTimeout(this.tick,1000);
+        window.document.title = '(' + this.prettyTime + ') Timekr';
       } else if (this.time == 0) {
         this.commitOnePomodoro();
+        window.document.title = 'Timekr';
       }
     },
     beep(){
