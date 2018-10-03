@@ -64,22 +64,6 @@ let colors = {
   'red-lighter': '#f9acaa',
   'red-lightest': '#fcebea',
 
-  'orange-darkest': '#462a16',
-  'orange-darker': '#613b1f',
-  'orange-dark': '#de751f',
-  'orange': '#f6993f',
-  'orange-light': '#faad63',
-  'orange-lighter': '#fcd9b6',
-  'orange-lightest': '#fff5eb',
-
-  'yellow-darkest': '#453411',
-  'yellow-darker': '#684f1d',
-  'yellow-dark': '#f2d024',
-  'yellow': '#ffed4a',
-  'yellow-light': '#fff382',
-  'yellow-lighter': '#fff9c2',
-  'yellow-lightest': '#fcfbeb',
-
   'green-darkest': '#0f2f21',
   'green-darker': '#1a4731',
   'green-dark': '#1f9d55',
@@ -88,14 +72,6 @@ let colors = {
   'green-lighter': '#a2f5bf',
   'green-lightest': '#e3fcec',
 
-  'teal-darkest': '#0d3331',
-  'teal-darker': '#20504f',
-  'teal-dark': '#38a89d',
-  'teal': '#4dc0b5',
-  'teal-light': '#64d5ca',
-  'teal-lighter': '#a0f0ed',
-  'teal-lightest': '#e8fffe',
-
   'blue-darkest': '#12283a',
   'blue-darker': '#1c3d5a',
   'blue-dark': '#2779bd',
@@ -103,14 +79,6 @@ let colors = {
   'blue-light': '#6cb2eb',
   'blue-lighter': '#bcdefa',
   'blue-lightest': '#eff8ff',
-
-  'indigo-darkest': '#191e38',
-  'indigo-darker': '#2f365f',
-  'indigo-dark': '#5661b3',
-  'indigo': '#6574cd',
-  'indigo-light': '#7886d7',
-  'indigo-lighter': '#b2b7ff',
-  'indigo-lightest': '#e6e8ff',
 
 }
 
@@ -263,15 +231,9 @@ module.exports = {
   */
 
   fontWeights: {
-    'hairline': 100,
-    'thin': 200,
-    'light': 300,
+    'light': 200,
     'normal': 400,
-    'medium': 500,
-    'semibold': 600,
     'bold': 700,
-    'extrabold': 800,
-    'black': 900,
   },
 
 
@@ -383,8 +345,6 @@ module.exports = {
     default: '1px',
     '0': '0',
     '2': '2px',
-    '4': '4px',
-    '8': '8px',
   },
 
 
@@ -585,10 +545,6 @@ module.exports = {
     'md': '40rem',
     'lg': '50rem',
     'xl': '60rem',
-    '2xl': '70rem',
-    '3xl': '80rem',
-    '4xl': '90rem',
-    '5xl': '100rem',
     'full': '100%',
   },
 
@@ -641,9 +597,6 @@ module.exports = {
     '10': '2.5rem',
     '12': '3rem',
     '16': '4rem',
-    '20': '5rem',
-    '24': '6rem',
-    '32': '8rem',
   },
 
 
@@ -676,9 +629,6 @@ module.exports = {
     '10': '2.5rem',
     '12': '3rem',
     '16': '4rem',
-    '20': '5rem',
-    '24': '6rem',
-    '32': '8rem',
   },
 
 
@@ -710,9 +660,6 @@ module.exports = {
     '10': '2.5rem',
     '12': '3rem',
     '16': '4rem',
-    '20': '5rem',
-    '24': '6rem',
-    '32': '8rem',
   },
 
 
