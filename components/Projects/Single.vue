@@ -37,7 +37,6 @@
       <pomodoro-timer @commitTime="commitTime"/>
 
       <button
-        :class="{ 'btn-tab': showInsertTimeForm, }"
         class="block w-full btn btn-primary"
         @click="showInsertTimeForm = 1">
         Insert time manually
@@ -45,7 +44,7 @@
 
       <form
         v-if="showInsertTimeForm"
-        class="flex border border-t-0 border-grey-darkest rounded-lg rounded-t-none p-2"
+        class="flex p-2 bg-1 shadow-md my-2 rounded-lg"
         @submit.prevent="commitTimeManually">
         <input
           v-model="insertedTime"
