@@ -41,6 +41,19 @@ export default {
       return this.twoDigits(Math.floor(this.time/60)) + ':' + this.twoDigits(this.time % 60);
     }
   },
+  created(){
+    if (localStorage.getItem('currentTimer'))
+      {
+        this.time = localStorage.getItem('currentTimer');
+        localStorage.removeItem('currentTimer');
+      }
+  },
+  destroyed(){
+    if (this.time > 0 && this.time < 1500){
+      localStorage.setItem('currentTimer', this.time);
+      this.timerStopped = 1;
+    }
+  },
   methods: {
     twoDigits(num){
       return ("0" + num).slice(-2)
@@ -96,6 +109,7 @@ export default {
         }, interval);
       }, interval);
     }
-  }
+  },
+  
 }
 </script>
