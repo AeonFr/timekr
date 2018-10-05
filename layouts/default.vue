@@ -52,7 +52,7 @@ export default {
   },
   data() {
     return {
-      darkInterface: '1'
+      darkInterface: '0'
     }
   },
   methods: {
