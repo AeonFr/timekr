@@ -114,7 +114,7 @@
         <div class="mt-2">
           <label
             for="time-budget"
-            class="block">Time Budget</label>
+            class="block">Time Budget (in minutes)</label>
           <input
             id="time-budget"
             v-model="projectTimeBudget"
@@ -189,6 +189,10 @@ export default {
       return moment(this.project.deadline).fromNow();
     }
   },
+  mounted(){
+    this.projectTimeBudget = this.project.time_budget || '';
+    this.projectDeadline   = !this.project.deadline ? '' : moment(this.project.deadline).format('YYYY-MM-DD')
+  },
   methods: {
     twoDigits(num){
       return ("0" + num).slice(-2)
@@ -216,15 +220,7 @@ export default {
     },
     editProjectSettings(){
 
-      if (this.projectTimeBudget == '')
-        this.projectTimeBudget = this.project.timeBudget || null;
-      
-      var deadline = null;
-
-      if (this.projectDeadline == '' || this.projectDeadline == NaN)
-        deadline = this.project.deadline || null;
-      else
-        deadline = + new Date(this.projectDeadline);
+      var deadline = + new Date(this.projectDeadline + 'T12:00:00');
 
       this.$store.commit('editProjectSettings', {
         project_id: this.$route.params.slug,
