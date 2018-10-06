@@ -1,10 +1,36 @@
 import Vuex from 'vuex';
 import { sortBy } from 'lodash';
+import Cookie from 'js-cookie';
+
+function saveState(state){
+  let stringifiedState = JSON.stringify(state);
+
+  localStorage.setItem('projects', stringifiedState);
+  
+  Cookie.set('projects', stringifiedState, { expires: 365 });
+
+  console.log(Cookie.get('projects'))
+}
+
+function retrieveState(){
+  let localStorageProjects = localStorage.getItem('projects');
+  let cookieProjects = Cookie.get('projects');
+  if (localStorageProjects || cookieProjects){
+    try{
+      let parsedProjects = JSON.parse(localStorageProjects || cookieProjects);
+      if (parsedProjects)
+        return parsedProjects;
+    } catch (e) {
+      console.log('JSON parsing failed')
+    }
+  }
+  return {};
+}
 
 const createStore = () => {
   return new Vuex.Store({
     state: {
-      projects: JSON.parse(localStorage.getItem('projects') || '{}'),
+      projects: retrieveState(),
     },
     mutations: {
       addProject (state, { name }) {
@@ -21,21 +47,21 @@ const createStore = () => {
         };
         
         // commit
-        localStorage.setItem('projects', JSON.stringify(state.projects));
+        saveState(state.projects);
       },
       updateProject (state, {id, name}){
         state.projects[id].name = name;
         state.projects[id].updated_at = + new Date();
 
         // commit
-        localStorage.setItem('projects', JSON.stringify(state.projects));
+        saveState(state.projects);
       },
       deleteProject (state, { name }) {
         delete state.projects[name];
         state.projects = Object.assign({}, state.projects);
         
         // commit
-        localStorage.setItem('projects', JSON.stringify(state.projects));
+        saveState(state.projects);
       },
       commitTime(state, { project_id, amount }) {
         
@@ -55,7 +81,7 @@ const createStore = () => {
         state.projects = Object.assign({}, state.projects, assign);
 
         // commit
-        localStorage.setItem('projects', JSON.stringify(state.projects));
+        saveState(state.projects);
       },
       editProjectSettings(state, { project_id, timeBudget, deadline }) {
         if (timeBudget) {
@@ -77,7 +103,7 @@ const createStore = () => {
         }
 
         // commit
-        localStorage.setItem('projects', JSON.stringify(state.projects));
+        saveState(state.projects);
       }
     }
   })
