@@ -104,7 +104,11 @@ const createStore = () => {
 
         // commit
         saveState(state.projects);
-      }
+      },
+      importProjects(state, projects){
+        state.projects = projects;
+        saveState(projects);
+      },
     }
   })
 }

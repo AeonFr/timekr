@@ -37,6 +37,63 @@
               @change="setDarkInterface()"> Dark
           </label>
         </div>
+        <h1 class="mt-4 text-xl tracking-wide uppercase font-light leading-loose">
+          My Data
+        </h1>
+        <button
+          class="btn btn-default"
+          @click="exportData">
+          <img 
+            src="~/assets/icons/download-cloud.svg"
+            class="opacity-50"
+            aria-hidden="true">
+          Export
+        </button>
+        <button
+          class="btn btn-default"
+          @click="showImportForm = true">
+          <img 
+            src="~/assets/icons/upload-cloud.svg"
+            class="opacity-50"
+            aria-hidden="true">
+          Import
+        </button>
+
+        <form
+          v-if="showImportForm"
+          class="mt-2"
+          @submit.prevent="importData">
+          <input
+            ref="fileInput"
+            type="file"
+            class="py2 btn btn-primary max-w-full overflow-hidden">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            accept=".json">
+            import
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            @click="showImportForm = false">
+            cancel
+          </button>
+        </form>
+
+        <div
+          v-if="!cookieConsentAccepted"
+          class="border p-4 my-4 rounded-lg leading-tight">
+          This site uses both Cookies and <code>localStorage</code> to store your user data.
+          Any data you provide is saved on your current browser and device <em>only</em>.
+          The site doesn't store any data whatsoever, so keep a backup yourself!
+          Sorry for the inconvinience.
+          <button
+            class="btn btn-primary mt-2"
+            @click="acceptCookieConsent">
+            I understand
+          </button>
+        </div>
       </aside>
       <nuxt class="w-full m:w-2/3 px-4 mt-4"/>
     </div>
@@ -44,6 +101,9 @@
 </template>
 
 <script>
+
+import saveAs from 'file-saver';
+
 import Projects from '~/components/Projects/List.vue'
 
 export default {
@@ -52,7 +112,9 @@ export default {
   },
   data() {
     return {
-      darkInterface: '0'
+      darkInterface: '0',
+      showImportForm: false,
+      cookieConsentAccepted: (localStorage.getItem('cookie_consent') || false),
     }
   },
   methods: {
@@ -62,6 +124,45 @@ export default {
       } else {
         document.body.classList.remove('dark-interface')
       }
+    },
+    acceptCookieConsent(){
+      this.cookieConsentAccepted = true;
+      localStorage.setItem('cookie_consent', 1);
+    },
+    exportData(){
+      let data = this.$store.state.projects;
+      let blob = new Blob([ JSON.stringify(data) ], {type: "application/json;charset=utf-8"});
+      saveAs(blob, "timekr.json");
+    },
+    importData(){
+      let fileInput = this.$refs.fileInput;
+      if (!fileInput) return false;
+
+      let file = fileInput.files[0];
+      let fr = new FileReader();
+
+      let vm = this;
+      fr.onloadend = function(evt){
+        if(evt.target.readyState != 2) return;
+        if(evt.target.error) {
+            alert('Error while reading file');
+            return;
+        }
+
+        try{
+          let projects = JSON.parse(evt.target.result);
+          vm.$store.commit('importProjects', projects);
+          vm.showImportForm = false;
+          alert('Data imported succesfully');
+          return true;
+        }catch(e){
+          alert('Error during file evaluation!\
+          Its probably in the incorrect format (JSON.parse failed)');
+          console.log(e)
+          return false;
+        }
+      };
+      fr.readAsText(file);
     }
   }
 }
