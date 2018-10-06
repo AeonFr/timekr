@@ -19,6 +19,7 @@
           :class="{ 'input-error': invalidProjectName }"
           class="input mr-3"
           type="text"
+          autofocus="on"
           placeholder="New Name"
           aria-label="Project Name">
         <button
