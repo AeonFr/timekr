@@ -33,6 +33,7 @@
         <button
           class="flex-no-shrink btn btn-primary"
           type="submit">
+          <icon name="plus"/>
           Add
         </button>
       </div>
@@ -41,8 +42,13 @@
 </template>
 <script>
 
+import Icon from "~/components/Icon.vue";
+
 export default {
   name: 'Projects',
+  components: {
+    Icon
+  },
   data(){
     return {
       newProjectName: '',

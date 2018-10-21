@@ -8,6 +8,7 @@
       type="button"
       class="btn btn-primary align-top"
       @click="startTimer">
+      <icon name="play"/>
       Start
     </button>
 
@@ -15,6 +16,7 @@
       type="button"
       class="btn btn-default align-top"
       @click="stopTimer">
+      <icon name="pause"/>
       Stop
     </button>
 
@@ -22,14 +24,21 @@
       type="button"
       class="btn btn-danger align-top"
       @click="resetTimer">
+      <icon name="refresh-ccw"/>
       Reset
     </button>
 
   </div>
 </template>
 <script>
+
+import Icon from "~/components/Icon.vue";
+
 export default {
   name: 'PomodoroTimer',
+  components: {
+    Icon
+  },
   data() {
     return {
       time: 1500,

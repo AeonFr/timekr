@@ -40,6 +40,7 @@
       <button
         class="block w-full btn btn-primary"
         @click="showInsertTimeForm = 1">
+        <icon name="plus-circle"/>        
         Insert time manually
       </button>
 
@@ -92,14 +93,15 @@
         
         <nuxt-link
           :to="'/project/' + $route.params.slug + '/commits'"
-          class="btn btn-default mt-4 no-underline inline-block">
+          class="btn btn-primary mt-4 no-underline inline-block">
+          <icon name="clock"/>
           Commit History
         </nuxt-link>
         <br>
         <button
-          class="btn btn-primary mt-4"
+          class="btn btn-default mt-4"
           @click="showEditProjectSettings = 1">
-          Edit Project Settings
+          Project Settings
         </button>
         <button
           class="btn btn-default mt-4"
@@ -154,13 +156,15 @@
 <script>
 
 import PomodoroTimer from '~/components/PomodoroTimer.vue';
+import Icon from '~/components/Icon.vue';
 
 var moment = require('moment');
 
 export default {
   name: 'ProjectDetails',
   components: {
-    PomodoroTimer
+    PomodoroTimer,
+    Icon
   },
   data(){
     return {
