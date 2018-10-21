@@ -20,7 +20,9 @@
               type="radio"
               name="interface"
               value="0"
-              @change="setDarkInterface()"> Light
+              @change="setDarkInterface()">
+            <icon name="sun"/>              
+            Light
           </label>
           <label
             :class="{
@@ -34,7 +36,9 @@
               type="radio"
               name="interface"
               value="1"
-              @change="setDarkInterface()"> Dark
+              @change="setDarkInterface()">
+            <icon name="moon"/>
+            Dark
           </label>
         </div>
         <h1 class="mt-4 text-xl tracking-wide uppercase font-light leading-loose">
@@ -43,19 +47,13 @@
         <button
           class="btn btn-default"
           @click="exportData">
-          <img 
-            src="~/assets/icons/download-cloud.svg"
-            class="opacity-50"
-            aria-hidden="true">
+          <icon name="download-cloud"/>
           Export
         </button>
         <button
           class="btn btn-default"
           @click="showImportForm = true">
-          <img 
-            src="~/assets/icons/upload-cloud.svg"
-            class="opacity-50"
-            aria-hidden="true">
+          <icon name="upload-cloud"/>
           Import
         </button>
 
@@ -104,11 +102,13 @@
 
 import saveAs from 'file-saver';
 
-import Projects from '~/components/Projects/List.vue'
+import Projects from '~/components/Projects/List.vue';
+import Icon from '~/components/Icon.vue';
 
 export default {
   components: {
     Projects,
+    Icon
   },
   data() {
     return {
@@ -171,11 +171,16 @@ export default {
 <style>
   body{
     color: #333;
+    transition: background-color .2s;
   }
 
   body.dark-interface{
     color: #a0a0a0;
     background-color: #222222;
+  }
+
+  p{
+    margin-bottom: 1em;
   }
 
   :focus:not(:focus-visible) { outline: none }
