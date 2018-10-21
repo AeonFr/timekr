@@ -35,6 +35,8 @@
         </button>
       </form>
       
+      <commit-graph :commits="project.commits"/>
+
       <pomodoro-timer @commitTime="commitTime"/>
 
       <button
@@ -139,6 +141,7 @@
 
 import PomodoroTimer from '~/components/PomodoroTimer.vue';
 import Icon from '~/components/Icon.vue';
+import CommitGraph from '~/components/Projects/CommitGraph.vue';
 
 var moment = require('moment');
 
@@ -146,7 +149,8 @@ export default {
   name: 'ProjectDetails',
   components: {
     PomodoroTimer,
-    Icon
+    Icon,
+    CommitGraph
   },
   data(){
     return {
