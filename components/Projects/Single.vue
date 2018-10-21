@@ -183,9 +183,6 @@ export default {
     prettyTime(amount){
       return this.twoDigits(Math.floor(amount/60)) + ':' + this.twoDigits(amount % 60);
     },
-    prettyDate(time, format){
-      return moment(time).format( format == 'minutes' ? 'LTS' : 'L');
-    },
     editProjectName(){
       if (!this.newProjectName)
         return this.invalidProjectName = 1;
@@ -202,13 +199,10 @@ export default {
       this.showInsertTimeForm = 0;
     },
     editProjectSettings(){
-
-      var deadline = + new Date(this.projectDeadline + 'T12:00:00');
-
+      
       this.$store.commit('editProjectSettings', {
         project_id: this.$route.params.slug,
         timeBudget: this.projectTimeBudget,
-        deadline
       });
 
       this.showEditProjectSettings = 0;
