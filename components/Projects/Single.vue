@@ -79,14 +79,6 @@
             Of the time budget
           </div>
         </div>
-        <div
-          v-if="project.deadline"
-          class="leading-normal px-4">
-          <div class="text-1 text-2xl">{{ prettyDate(project.deadline, 'day') }}</div>
-          <div class="text-sm">
-            Next deadline {{ nextDeadline }}
-          </div>
-        </div>
       </section>
 
       <div class="mv-4 text-left">
@@ -101,7 +93,7 @@
         <button
           class="btn btn-default mt-4"
           @click="showEditProjectSettings = 1">
-          Project Settings
+          Define time budget
         </button>
         <button
           class="btn btn-default mt-4"
@@ -124,16 +116,6 @@
             type="number"
             class="input mt-2"
             placeholder="Time Budget (in minutes)">
-        </div>
-        <div class="mt-2">
-          <label
-            for="deadline"
-            class="block">Next deadline</label>
-          <input 
-            id="deadline"
-            v-model="projectDeadline"
-            type="date"
-            class="input mt-2">
         </div>
         <div class="mt-2 text-center">
           <button
@@ -190,13 +172,9 @@ export default {
     timeBudget(){
       return Math.round(this.project.time * 100 / this.project.time_budget);
     },
-    nextDeadline(){
-      return moment(this.project.deadline).fromNow();
-    }
   },
   mounted(){
     this.projectTimeBudget = this.project.time_budget || '';
-    this.projectDeadline   = !this.project.deadline ? '' : moment(this.project.deadline).format('YYYY-MM-DD')
   },
   methods: {
     twoDigits(num){
