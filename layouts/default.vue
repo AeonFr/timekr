@@ -59,7 +59,7 @@
 
         <form
           v-if="showImportForm"
-          class="mt-2"
+          class="mt-2 show-ltr"
           @submit.prevent="importData">
           <input
             ref="fileInput"
@@ -81,7 +81,7 @@
 
         <div
           v-if="!cookieConsentAccepted"
-          class="border p-4 my-4 rounded-lg leading-tight">
+          class="border p-4 my-4 rounded-lg leading-tight show-ltr">
           This site uses both Cookies and <code>localStorage</code> to store your user data.
           Any data you provide is saved on your current browser and device <em>only</em>.
           The site doesn't store any data whatsoever, so keep a backup yourself!
@@ -93,7 +93,7 @@
           </button>
         </div>
       </aside>
-      <nuxt class="w-full m:w-2/3 px-4 mt-4"/>
+      <nuxt class="childs-animated w-full m:w-2/3 px-4 mt-4"/>
     </div>
   </section>
 </template>
@@ -278,5 +278,24 @@ export default {
   .dark-interface .text-1{
     @apply text-grey;
   }
+
+
+  .childs-animated>*>*, .show-ltr{
+    transform: translateX(-2rem);
+    opacity: 0;
+    animation: show-ltr 0.5s;
+    animation-fill-mode: forwards;
+    --delay-increm: 0.1s;
+  }
+  @keyframes show-ltr{
+    to{ opacity: 1; transform: translateX(0) }
+  }
+  .childs-animated>*>*:nth-child(2){ animation-delay: var(--delay-increm) }
+  .childs-animated>*>*:nth-child(3){ animation-delay: calc(var(--delay-increm) * 2) }
+  .childs-animated>*>*:nth-child(4){ animation-delay: calc(var(--delay-increm) * 3) }
+  .childs-animated>*>*:nth-child(5){ animation-delay: calc(var(--delay-increm) * 4) }
+  .childs-animated>*>*:nth-child(6){ animation-delay: calc(var(--delay-increm) * 5) }
+  .childs-animated>*>*:nth-child(7){ animation-delay: calc(var(--delay-increm) * 6) }
+
 </style>
 

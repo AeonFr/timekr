@@ -1,9 +1,9 @@
 <template>
   <main class="text-center">
-    <div v-if="project == -1">
+    <template v-if="project == -1">
       This project doesn't exist or was deleted.
-    </div>
-    <div v-else>
+    </template>
+    <template v-else>
       <h1
         v-if="!editingProjectName"
         class="pb-3 font-light border-b border-transparent hover:border-blue"
@@ -148,7 +148,7 @@
         </div>
       </form>
 
-    </div>
+    </template>
   </main>
 </template>
 <script>
