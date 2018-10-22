@@ -34,8 +34,6 @@
           Cancel
         </button>
       </form>
-      
-      <commit-graph :commits="project.commits"/>
 
       <pomodoro-timer @commitTime="commitTime"/>
 
@@ -85,9 +83,12 @@
 
       <div class="mv-4 text-left">
         
+        <commit-history-graph
+          :commits="project.commits"
+          :start-of-project="project.created_at"/>
         <nuxt-link
           :to="'/project/' + $route.params.slug + '/commits'"
-          class="btn btn-primary mt-4 no-underline inline-block">
+          class="btn btn-primary mt-4 no-underline block text-center">
           <icon name="clock"/>
           Commit History
         </nuxt-link>
@@ -141,7 +142,7 @@
 
 import PomodoroTimer from '~/components/PomodoroTimer.vue';
 import Icon from '~/components/Icon.vue';
-import CommitGraph from '~/components/Projects/CommitGraph.vue';
+import CommitHistoryGraph from '~/components/Projects/CommitHistoryGraph.vue';
 
 var moment = require('moment');
 
@@ -150,7 +151,7 @@ export default {
   components: {
     PomodoroTimer,
     Icon,
-    CommitGraph
+    CommitHistoryGraph
   },
   data(){
     return {
@@ -161,7 +162,6 @@ export default {
       insertedTime: '',
       showEditProjectSettings: 0,
       projectTimeBudget: '',
-      projectDeadline: '',
     }
   },
   computed: {
