@@ -6,13 +6,17 @@
     <template v-else>
       <h1
         v-if="!editingProjectName"
-        class="pb-3 font-light border-b border-transparent hover:border-blue"
-        @click="editingProjectName = true">
+        class="pb-3 font-light m:text-left">
         {{ project.name || $route.params.slug }}
+        <span
+          class="float-right mt-1 btn btn-default text-sm"
+          @click="editingProjectName = true">
+          Rename
+        </span>
       </h1>
       <form
         v-else
-        class="pb-3 flex items-center border-b border-b-2"
+        class="pb-3 flex items-center"
         @submit.prevent="editProjectName">
         <input
           v-model="newProjectName"
@@ -35,34 +39,8 @@
         </button>
       </form>
 
+      
       <pomodoro-timer @commitTime="commitTime"/>
-
-      <button
-        class="block w-full btn btn-primary"
-        @click="showInsertTimeForm = 1">
-        <icon name="plus-circle"/>        
-        Insert time manually
-      </button>
-
-      <form
-        v-if="showInsertTimeForm"
-        class="flex p-2 bg-1 shadow-md my-2 rounded-lg"
-        @submit.prevent="commitTimeManually">
-        <input
-          v-model="insertedTime"
-          type="number"
-          class="input mr-3"
-          placeholder="Minutes"
-          aria-label="Minutes">
-        <button
-          type="submit"
-          class="btn btn-primary">Insert</button>
-        <button
-          type="button"
-          class="btn btn-danger"
-          @click="showInsertTimeForm = 0">Cancel</button>
-      </form>
-
 
       <section
         id="stats"
@@ -81,59 +59,75 @@
         </div>
       </section>
 
-      <div class="mv-4 text-left">
-        
-        <commit-history-graph
-          :commits="project.commits"
-          :start-of-project="project.created_at"/>
-        <nuxt-link
-          :to="'/project/' + $route.params.slug + '/commits'"
-          class="btn btn-primary mt-4 no-underline block text-center">
-          <icon name="clock"/>
-          Commit History
-        </nuxt-link>
-        <br>
-        <button
-          class="btn btn-default mt-4"
-          @click="showEditProjectSettings = 1">
-          Define time budget
-        </button>
-        <button
-          class="btn btn-default mt-4"
-          @click="deleteProject">
-          Delete project
-        </button>
-      </div>
+      <commit-history-graph
+        :commits="project.commits"
+        :start-of-project="project.created_at"/>
 
+      <hr class="mt-6">
+
+      <nuxt-link
+        v-if="project.commits.length"
+        :to="'/project/' + $route.params.slug + '/commits'"
+        class="block btn btn-primary no-underline mt-2">
+        Commit History
+        <icon name="chevron-right"/>
+      </nuxt-link>
+
+
+      <button
+        :class="{ 'shadow-md': showInsertTimeForm }"
+        class="block mt-2 btn btn-default"
+        @click="showInsertTimeForm = 1">
+        <icon name="plus-circle"/>        
+        Insert time manually
+      </button>
+      <form
+        v-if="showInsertTimeForm"
+        class="m:flex items-end p-2 bg-1 shadow-md my-2 rounded-lg"
+        @submit.prevent="commitTimeManually">
+        <time-input :value.sync="insertedTime"/>
+        <button
+          type="submit"
+          class="mt-2 btn btn-primary">Insert</button>
+        <button
+          type="button"
+          class="mt-2 btn btn-danger"
+          @click="showInsertTimeForm = 0">Cancel</button>
+      </form>
+
+      <button
+        :class="{ 'shadow-md': showEditProjectSettings }"
+        class="block mt-2 btn btn-default"
+        @click="showEditProjectSettings = 1">
+        <icon name="clock"/> 
+        Define time budget
+      </button>
       <form
         v-if="showEditProjectSettings"
-        class="my-2 p-2 bg-1 shadow-md rounded-lg text-left"
+        class="m:flex items-end p-2 bg-1 shadow-md my-2 rounded-lg"
         @submit.prevent="editProjectSettings">
-        <div class="mt-2">
-          <label
-            for="time-budget"
-            class="block">Time Budget (in minutes)</label>
-          <input
-            id="time-budget"
-            v-model="projectTimeBudget"
-            type="number"
-            class="input mt-2"
-            placeholder="Time Budget (in minutes)">
-        </div>
-        <div class="mt-2 text-center">
-          <button
-            type="submit"
-            class="btn btn-primary">
-            Save
-          </button>
-          <button
-            type="button"
-            class="btn btn-default"
-            @click="showEditProjectSettings = 0">
-            Cancel
-          </button>
-        </div>
+        <time-input :value.sync="projectTimeBudget"/>
+        <button
+          type="submit"
+          class="mt-2 btn btn-primary">
+          Save
+        </button>
+        <button
+          type="button"
+          class="mt-2 btn btn-default"
+          @click="showEditProjectSettings = 0">
+          Cancel
+        </button>
       </form>
+
+      <button
+        class="block mt-2 btn btn-default"
+        @click="deleteProject">
+        <icon name="trash"/> 
+        Delete project
+      </button>
+
+      
 
     </template>
   </main>
@@ -143,6 +137,7 @@
 import PomodoroTimer from '~/components/PomodoroTimer.vue';
 import Icon from '~/components/Icon.vue';
 import CommitHistoryGraph from '~/components/Projects/CommitHistoryGraph.vue';
+import TimeInput from '~/components/TimeInput.vue';
 
 var moment = require('moment');
 
@@ -151,7 +146,8 @@ export default {
   components: {
     PomodoroTimer,
     Icon,
-    CommitHistoryGraph
+    CommitHistoryGraph,
+    TimeInput
   },
   data(){
     return {
@@ -159,7 +155,7 @@ export default {
       newProjectName: '',
       invalidProjectName: 0,
       showInsertTimeForm: 0,
-      insertedTime: '',
+      insertedTime: 0,
       showEditProjectSettings: 0,
       projectTimeBudget: '',
     }

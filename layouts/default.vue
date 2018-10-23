@@ -190,7 +190,7 @@ export default {
   }
 
   .btn {
-    @apply border tracking-wide uppercase py-2 px-4 rounded-full;
+    @apply border tracking-wide uppercase py-2 px-4 rounded-full cursor-default;
   }
 
   .btn-primary {
@@ -281,15 +281,17 @@ export default {
 
 
   .childs-animated>*>*, .show-ltr{
+    --delay-increm: 0.1s;
     transform: translateX(-2rem);
     opacity: 0;
     animation: show-ltr 0.2s cubic-bezier(.55,0,.1,1);
     animation-fill-mode: forwards;
-    --delay-increm: 0.1s;
+    animation-delay: calc(var(--delay-increm) * 7);
   }
   @keyframes show-ltr{
     to{ opacity: 1; transform: translateX(0) }
   }
+  .childs-animated>*>*:nth-child(1){ animation-delay: 0 }
   .childs-animated>*>*:nth-child(2){ animation-delay: var(--delay-increm) }
   .childs-animated>*>*:nth-child(3){ animation-delay: calc(var(--delay-increm) * 2) }
   .childs-animated>*>*:nth-child(4){ animation-delay: calc(var(--delay-increm) * 3) }
