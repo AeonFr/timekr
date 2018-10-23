@@ -1,5 +1,5 @@
 import Vuex from 'vuex';
-import { sortBy } from 'lodash';
+import { sortBy, find } from 'lodash';
 import Cookie from 'js-cookie';
 
 function saveState(state){
@@ -109,6 +109,21 @@ const createStore = () => {
         state.projects = projects;
         saveState(projects);
       },
+      editCommit(state, { project_slug, commitData }){
+        if (!state.projects[project_slug])
+          return console.warn('Project ' + project_slug + ' not found');
+        let commit = find(state.projects[project_slug].commits, { 'commited_at': commitData.commited_at });
+        if (!commit)
+          return console.warn('Commit not found on project');
+
+        commit.amount = Number(commitData.amount);
+
+        let assign = {};
+        assign[project_slug] = state.projects[project_slug];
+        state.projects = Object.assign({}, state.projects, assign);
+
+        saveState(state.projects);
+      }
     }
   })
 }

@@ -6,7 +6,7 @@
       <nuxt-link
         :to="'/project/' + $route.params.slug"
         class="text-1 no-underline hover:underline">
-        {{ project.name }}
+        {{ project.name || $route.params.slug }}
       </nuxt-link>
       > Commit History
 
@@ -42,6 +42,30 @@
             </span>
             commited at
             <span class="text-1">{{ prettyDate(commit.commited_at, 'minutes') }}</span>
+            <span
+              :class="{ 'font-bold': (editCommit.commited_at == commit.commited_at) }"
+              class="float-right text-1 hover:text-blue uppercase cursor-default"
+              tabindex="0"
+              @click="editCommit = Object.assign({}, commit)">
+              Edit
+            </span>
+            <form
+              v-if="(editCommit.commited_at == commit.commited_at)"
+              class="m:flex items-end mt-4 pb-2 border-b"
+              @submit.prevent="submitEditedCommit">
+              <time-input :value.sync="editCommit.amount"/>
+              <button
+                type="submit"
+                class="btn btn-primary">
+                Edit
+              </button>
+              <button
+                type="button"
+                class="btn btn-default"
+                @click="editCommit = false">
+                Cancel
+              </button>
+            </form>
           </li>
         </div>
       </div>
@@ -52,11 +76,20 @@
 <script>
 
 import { groupBy, sumBy } from 'lodash';
+import moment from 'moment';
 
-var moment = require('moment');
+import TimeInput from '~/components/TimeInput.vue';
 
 export default {
   name: 'ProjectCommitsList',
+  components: {
+    TimeInput
+  },
+  data(){
+    return {
+      editCommit: false,
+    }
+  },
   computed:{
     project(){
       if (!this.$store.state.projects[this.$route.params.slug])
@@ -88,6 +121,14 @@ export default {
     },
     totalTimeForDate(date){
       return this.prettyTime(sumBy(this.commitsByDate[date], function(n){ return parseInt(n.amount) }));
+    },
+    submitEditedCommit(){
+      this.$store.commit('editCommit',
+      {
+        project_slug: this.$route.params.slug,
+        commitData: this.editCommit
+      });
+      this.editCommit = false;
     }
   }
 }
