@@ -291,7 +291,7 @@ export default {
   @keyframes show-ltr{
     to{ opacity: 1; transform: translateX(0) }
   }
-  .childs-animated>*>*:nth-child(1){ animation-delay: 0 }
+  .childs-animated>*>*:nth-child(1){ animation-delay: 0s }
   .childs-animated>*>*:nth-child(2){ animation-delay: var(--delay-increm) }
   .childs-animated>*>*:nth-child(3){ animation-delay: calc(var(--delay-increm) * 2) }
   .childs-animated>*>*:nth-child(4){ animation-delay: calc(var(--delay-increm) * 3) }
