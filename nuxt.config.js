@@ -11,10 +11,59 @@ module.exports = {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: pkg.description }
+      { hid: 'description', name: 'description', content: pkg.description },
+      {
+        name: 'apple-mobile-web-app-title',
+        content: 'Timekr'
+      },
+      {
+        name: 'application-name',
+        content: 'Timekr'
+      },
+      {
+        name: 'msapplication-TileColor',
+        content: '#2d89ef'
+      },
+      {
+        name: 'msapplication-config',
+        content: '/favicons/browserconfig.xml'
+      },
+      {
+        name: 'theme-color',
+        content: '#ffffff'
+      }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      {
+        rel: 'apple-touch-icon',
+        sizes: '180x180',
+        href: '/favicons/apple-touch-icon.png'
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '32x32',
+        href: '/favicons/favicon-32x32.png'
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '16x16',
+        href: '/favicons/favicon-16x16.png'
+      },
+      {
+        rel: 'manifest',
+        href: '/favicons/site.webmanifest'
+      },
+      {
+        rel: 'mask-icon',
+        color: '#5bbad5',
+        href: '/favicons/logo.svg'
+      },
+      {
+        rel: 'shortcut icon',
+        href: '/favicons/favicon.ico'
+      },
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Oxygen:300,400,700&amp;subset=latin-ext' }
     ]
   },
