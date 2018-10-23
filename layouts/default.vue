@@ -1,8 +1,9 @@
 <template>
   <section
     class="container font-sans">
-    <div class="m:flex mb-4">
-      <aside class="w-full m:w-1/3 px-2">
+    <div class="m:flex flex-row-reverse mb-4">
+      <nuxt class="childs-animated w-full m:w-2/3 px-4 mt-4"/>
+      <aside class="w-full m:w-1/3 px-4 mt-8 m:mt-2">
         <projects/>
         <h1 class="text-xl tracking-wide uppercase font-light leading-loose">
           Interface
@@ -93,7 +94,6 @@
           </button>
         </div>
       </aside>
-      <nuxt class="childs-animated w-full m:w-2/3 px-4 mt-4"/>
     </div>
   </section>
 </template>
