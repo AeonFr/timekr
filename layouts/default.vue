@@ -93,21 +93,21 @@
           </button>
         </form>
 
-        <div
-          v-if="!cookieConsentAccepted"
-          class="border p-4 my-4 rounded-lg leading-tight show-ltr">
-          This site uses both Cookies and <code>localStorage</code> to store your user data
-          (it should be safe unless you decide to clear your cache).
-          Any data you provide is saved on your current browser and device <em>only</em>.
-          The server doesn't store any data whatsoever,
-          so you're adviced to keep regular backups using the Export function.
-          <button
-            class="btn btn-primary mt-2"
-            @click="acceptCookieConsent">
-            I understand
-          </button>
-        </div>
       </aside>
+    </div>
+    <div
+      v-if="!cookieConsentAccepted"
+      class="border p-4 my-4 rounded-lg leading-normal show-ltr">
+      This site uses both Cookies and <code>localStorage</code> to store your user data
+      (it should be safe unless you decide to clear your cache).
+      Any data you provide is saved on your current browser and device <em>only</em>.
+      The server doesn't store any data whatsoever,
+      so you're adviced to keep regular backups using the Export function.
+      <button
+        class="btn btn-primary mt-2"
+        @click="acceptCookieConsent">
+        I understand
+      </button>
     </div>
   </section>
 </template>
