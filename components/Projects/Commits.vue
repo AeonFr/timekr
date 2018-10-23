@@ -36,19 +36,25 @@
           <li
             v-for="(commit, i) in commits"
             :key="i"
-            class="p-2 bg-1">
-            <span class="text-1">
-              {{ prettyTime(commit.amount) }}
-            </span>
-            commited at
-            <span class="text-1">{{ prettyDate(commit.commited_at, 'minutes') }}</span>
-            <span
-              :class="{ 'font-bold': (editCommit.commited_at == commit.commited_at) }"
-              class="float-right text-1 hover:text-blue uppercase cursor-default"
-              tabindex="0"
+            class="group p-2 bg-1">
+            <div
+              class="m:flex"
               @click="editCommit = Object.assign({}, commit)">
-              Edit
-            </span>
+              <div>
+                <span class="text-1">
+                  {{ prettyTime(commit.amount) }}
+                </span>
+                commited at
+                <span class="text-1">{{ prettyDate(commit.commited_at, 'minutes') }}</span>
+              </div>
+              <div
+                :class="{ 'font-bold': (editCommit.commited_at == commit.commited_at) }"
+                class="ml-auto group-hover:opacity-75 opacity-25 cursor-default text-right"
+                tabindex="0">
+                <icon name="edit-3"/>
+                Edit
+              </div>
+            </div>
             <form
               v-if="(editCommit.commited_at == commit.commited_at)"
               class="m:flex items-end mt-4 pb-2 border-b"
@@ -79,11 +85,13 @@ import { groupBy, sumBy } from 'lodash';
 import moment from 'moment';
 
 import TimeInput from '~/components/TimeInput.vue';
+import Icon from '~/components/Icon.vue';
 
 export default {
   name: 'ProjectCommitsList',
   components: {
-    TimeInput
+    TimeInput,
+    Icon
   },
   data(){
     return {

@@ -6,17 +6,17 @@
     <template v-else>
       <h1
         v-if="!editingProjectName"
-        class="pb-3 font-light m:text-left">
-        {{ project.name || $route.params.slug }}
+        class="flex items-start mb-3 font-light text-xl m:text-xxl text-left">
+        <span class="leading-tight">{{ project.name || $route.params.slug }}</span>
         <span
-          class="float-right mt-1 btn btn-default text-sm"
+          class="ml-auto btn btn-default text-xs"
           @click="editingProjectName = true">
           Rename
         </span>
       </h1>
       <form
         v-else
-        class="pb-3 flex items-center"
+        class="pb-3 m:flex items-center"
         @submit.prevent="editProjectName">
         <input
           v-model="newProjectName"
@@ -32,7 +32,7 @@
           Update
         </button>
         <button
-          class="flex-no-shrink btn btn-default"
+          class="flex-no-shrink btn btn-default ml-1"
           type="button"
           @click="editingProjectName = false">
           Cancel
@@ -91,7 +91,7 @@
           class="mt-2 btn btn-primary">Insert</button>
         <button
           type="button"
-          class="mt-2 btn btn-danger"
+          class="mt-2 btn btn-default ml-1"
           @click="showInsertTimeForm = 0">Cancel</button>
       </form>
 
@@ -114,14 +114,14 @@
         </button>
         <button
           type="button"
-          class="mt-2 btn btn-default"
+          class="mt-2 btn btn-default ml-1"
           @click="showEditProjectSettings = 0">
           Cancel
         </button>
       </form>
 
       <button
-        class="block mt-2 btn btn-default"
+        class="block mt-2 btn btn-danger"
         @click="deleteProject">
         <icon name="trash"/> 
         Delete project
