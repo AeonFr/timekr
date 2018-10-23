@@ -4,6 +4,19 @@
     <div class="m:flex flex-row-reverse mb-4">
       <nuxt class="childs-animated w-full m:w-2/3 px-4 mt-4"/>
       <aside class="w-full m:w-1/3 px-4 mt-8 m:mt-2">
+
+        <nuxt-link
+          to="/"
+          class="flex items-center no-underline text-1 mb-3">
+          <img
+            src="~/assets/logo.png"
+            class="w-8 mr-4"
+            alt="Logo">
+          <h1 class="text-xl tracking-wide uppercase leading-loose">
+            Timekr
+          </h1>
+        </nuxt-link>
+
         <projects/>
         <h1 class="text-xl tracking-wide uppercase font-light leading-loose">
           Interface
