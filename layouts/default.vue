@@ -282,7 +282,7 @@ export default {
 
 
   .childs-animated>*>*, .show-ltr{
-    --delay-increm: 0.1s;
+    --delay-increm: 0.03s;
     transform: translateX(-2rem);
     opacity: 0;
     animation: show-ltr 0.2s cubic-bezier(.55,0,.1,1);
