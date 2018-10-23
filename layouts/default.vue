@@ -150,15 +150,16 @@ export default {
         }
 
         try{
+          if (!confirm('All existing data will be replaced. Are you sure you want to continue?')){
+            return;
+          }
           let projects = JSON.parse(evt.target.result);
           vm.$store.commit('importProjects', projects);
           vm.showImportForm = false;
-          alert('Data imported succesfully');
           return true;
-        }catch(e){
-          alert('Error during file evaluation!\
-          Its probably in the incorrect format (JSON.parse failed)');
-          console.log(e)
+        } catch(e) {
+          alert('Error during file evaluation! The file is probably in the incorrect format -JSON.parse failed');
+          console.log(e);
           return false;
         }
       };
