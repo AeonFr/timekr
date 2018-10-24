@@ -1,34 +1,57 @@
 <template>
-  <div class="block my-3 p-4 shadow-md bg-1 rounded-lg text-center">
-    <div class="m:inline-block mb-4 m:mb-0 px-4 text-3xl text-1 font-mono">
-      {{ prettyTime }}
+  <section>
+    <div class="block my-3 p-4 shadow-md bg-1 rounded-lg text-center">
+      <div class="m:inline-block mb-4 m:mb-0 px-4 text-3xl text-1 font-mono">
+        {{ prettyTime }}
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary align-top"
+        @click="startTimer">
+        <icon name="play"/>
+        Start
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-default align-top"
+        @click="stopTimer">
+        <icon name="pause"/>
+        Stop
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-danger align-top"
+        @click="resetTimer">
+        <icon name="refresh-ccw"/>
+        Reset
+      </button>
+
     </div>
-
-    <button
-      type="button"
-      class="btn btn-primary align-top"
-      @click="startTimer">
-      <icon name="play"/>
-      Start
-    </button>
-
-    <button
-      type="button"
-      class="btn btn-default align-top"
-      @click="stopTimer">
-      <icon name="pause"/>
-      Stop
-    </button>
-
-    <button
-      type="button"
-      class="btn btn-danger align-top"
-      @click="resetTimer">
-      <icon name="refresh-ccw"/>
-      Reset
-    </button>
-
-  </div>
+    <form
+      v-if="partialTimeCommiter != false"
+      class="m:flex items-center p-2 bg-1 shadow-md my-2 rounded-lg show-ltr"
+      @submit.prevent="commitPartialTime">
+      <div class="font-bold text-left m-2">
+        Commit {{ partialTimeCommiter }} minute{{ (partialTimeCommiter > 1) ? 's' : '' }}
+        and reset?
+      </div>
+      <button
+        type="submit"
+        class="ml-auto btn btn-primary">
+        Commit
+      </button>
+      <button
+        type="button"
+        class="btn btn-default ml-1"
+        @click="partialTimeCommiter = false">
+        Cancel
+      </button>
+    </form>
+  </section>
+  
 </template>
 <script>
 
@@ -43,6 +66,7 @@ export default {
     return {
       time: 1500,
       timerStopped: false,
+      partialTimeCommiter: false,
     }
   },
   computed: {
@@ -68,16 +92,22 @@ export default {
       return ("0" + num).slice(-2)
     },
     startTimer() {
+      if (this.timerStopped = false) return;
       if (this.time == 0) this.time = 1500;
       this.timerStopped = false;
       window.setTimeout(this.tick,1000);
+      this.partialTimeCommiter = false;
     },
     stopTimer(){
+      if (this.timerStopped) return;
       this.timerStopped = true;
+      if (this.time <= 1500)
+        this.partialTimeCommiter = Math.max(1, Math.round((1500 - this.time) / 60));
     },
     resetTimer(){
       this.timerStopped = true;
       this.time = 1500;
+      this.partialTimeCommiter = false;
     },
     tick() {
       if (this.time > 0 && !this.timerStopped) {
@@ -87,6 +117,7 @@ export default {
       } else if (this.time == 0) {
         this.commitOnePomodoro();
         window.document.title = 'Timekr';
+        this.timerStopped = true;
       }
     },
     beep(){
@@ -117,6 +148,11 @@ export default {
           window.setTimeout(vm.beep, interval);
         }, interval);
       }, interval);
+    },
+    commitPartialTime(){
+      this.$emit('commitTime', { amount: this.partialTimeCommiter });
+      this.resetTimer();
+      this.partialTimeCommiter = false;
     }
   },
   
