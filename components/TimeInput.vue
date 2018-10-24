@@ -38,11 +38,11 @@ export default {
   computed: {
     hours(){
       if (this.value == '-') return -0;
-      return Math.floor(this.value/60);
+      return Math.floor(Number(this.value)/60);
     },
     minutes(){
       if (this.value == '-') return -0;
-      return (this.value % 60);
+      return (Number(this.value) % 60);
     }
   },
   methods: {
