@@ -82,7 +82,7 @@ export default {
     },
     pastWeeksLabels(){
       let result = [];
-      for(let i = 1; i <= 6; i ++){
+      for(let i = 0; i <= 5; i ++){
         let startOfWeek = moment().subtract(i, 'weeks').startOf('week');
         let index = {
           month: startOfWeek.format('MMM'),
