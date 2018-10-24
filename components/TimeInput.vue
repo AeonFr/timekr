@@ -6,7 +6,7 @@
         ref="hoursInput"
         :value="hours"
         type="text"
-        pattern="\d+"
+        pattern="-?\d+"
         name="hours"
         class="input text-lg font-mono"
         placeholder="00"
@@ -18,7 +18,7 @@
         ref="minutesInput"
         :value="minutes"
         type="text"
-        pattern="\d+"
+        pattern="-?\d+"
         name="minutes"
         class="input text-lg font-mono"
         placeholder="00"
@@ -37,9 +37,11 @@ export default {
   },
   computed: {
     hours(){
+      if (this.value == '-') return -0;
       return Math.floor(this.value/60);
     },
     minutes(){
+      if (this.value == '-') return -0;
       return (this.value % 60);
     }
   },
