@@ -177,8 +177,10 @@ export default {
     this.projectTimeBudget = this.project.time_budget || '';
   },
   methods: {
-    twoDigits(num){
-      return ("0" + num).slice(-2)
+    twoDigits(num){ // Adds a trailing zero to a number
+      if ((num+"").length <= 2)
+        return ("0" + num).slice(-2)
+      else return (num+"");
     },
     prettyTime(amount){
       return this.twoDigits(Math.floor(amount/60)) + ':' + this.twoDigits(amount % 60);
