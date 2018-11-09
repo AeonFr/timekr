@@ -19,17 +19,17 @@
 
     <g style="font-size: 8px;fill: currentColor">
       <text
-        x="5"
-        y="9">Mon.</text>
+        x="4"
+        y="7">Mon.</text>
       <text
-        x="5"
-        y="29">Wed.</text>
+        x="4"
+        y="27">Wed.</text>
       <text
-        x="5"
-        y="49">Fri.</text>
+        x="4"
+        y="47">Fri.</text>
       <text
-        x="5"
-        y="69">Sun.</text>
+        x="4"
+        y="67">Sun.</text>
       
       <g
         v-for="(l, i) in pastWeeksLabels"
