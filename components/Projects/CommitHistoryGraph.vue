@@ -122,7 +122,7 @@ export default {
           startOfWeek = moment().startOf('week'),
           weekday = commitedAt.isoWeekday(),
           weekDiff = (moment.duration(commitedAt.startOf('week').diff(startOfWeek)).asWeeks()) - 1;
-        return [ Math.abs(weekDiff), weekday ];
+        return [ Math.abs(Math.ceil(weekDiff)), weekday ];
     }
   }
 }
