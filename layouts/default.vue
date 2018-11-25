@@ -17,6 +17,17 @@
           </h1>
         </nuxt-link>
 
+        <h1 class="text-xl tracking-wide uppercase font-light leading-loose">
+          My Account
+        </h1>
+
+        <p>
+          <nuxt-link to="/user?log-in">Log in</nuxt-link>
+          or
+          <nuxt-link to="/user?create-account">create an account</nuxt-link>
+          to easily sync your data among devices.
+        </p>
+
         <projects/>
         <h1 class="text-xl tracking-wide uppercase font-light leading-loose">
           Interface
@@ -95,20 +106,6 @@
 
       </aside>
     </div>
-    <div
-      v-if="!cookieConsentAccepted"
-      class="border p-4 my-4 rounded-lg leading-normal show-ltr">
-      This site uses both Cookies and <code>localStorage</code> to store your user data
-      (it should be safe unless you decide to clear your cache).
-      Any data you provide is saved on your current browser and device <em>only</em>.
-      The server doesn't store any data whatsoever,
-      so you're adviced to keep regular backups using the Export function.
-      <button
-        class="btn btn-primary mt-2"
-        @click="acceptCookieConsent">
-        I understand
-      </button>
-    </div>
   </section>
 </template>
 
@@ -117,18 +114,20 @@
 import saveAs from 'file-saver';
 
 import Projects from '~/components/Projects/List.vue';
+import Firebase from '~/components/Authentication/Firebase.vue';
 import Icon from '~/components/Icon.vue';
 
 export default {
   components: {
     Projects,
+    Firebase,
     Icon
   },
   data() {
     return {
       darkInterface: '0',
       showImportForm: false,
-      cookieConsentAccepted: (localStorage.getItem('cookie_consent') || false),
+      dataPolicyAccepted: false,
     }
   },
   methods: {
@@ -138,10 +137,6 @@ export default {
       } else {
         document.body.classList.remove('dark-interface')
       }
-    },
-    acceptCookieConsent(){
-      this.cookieConsentAccepted = true;
-      localStorage.setItem('cookie_consent', 1);
     },
     exportData(){
       let data = this.$store.state.projects;
@@ -252,7 +247,7 @@ export default {
   }
 
   .input{
-    @apply text-grey-darkest appearance-none bg-transparent w-full py-1 px-2 leading-tight;
+    @apply text-grey-darkest appearance-none bg-transparent w-full py-1 px-2 leading-tight border;
   }
 
   .dark-interface .input{
@@ -260,7 +255,7 @@ export default {
   }
 
   .input:focus{
-    @apply outline-none;
+    outline: 4px solid #ffbf47;
   }
 
   .input-error{

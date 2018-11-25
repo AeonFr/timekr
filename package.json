@@ -16,6 +16,7 @@
     "cross-env": "^5.2.0",
     "feather-icons": "^4.7.3",
     "file-saver": "^2.0.0-rc.3",
+    "firebase": "^5.5.9",
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
