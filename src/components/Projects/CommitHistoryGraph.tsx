@@ -1,6 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import moment from "moment";
 import { groupBy, sumBy } from "lodash";
+import Switch from "../Switch";
 
 interface Commit {
   commited_at: number;
@@ -22,6 +23,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
   commits = [] as Commit[],
   totalTime = 0,
 }) => {
+  const [viewType, setViewType] = useState<string>("Per day");
   // Find the earliest commit date or use current date if no commits
   const startOfProject = useMemo(() => {
     if (commits.length === 0) {
@@ -143,7 +145,16 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
   }, [weeksData, totalTime]);
 
   return (
-    <svg viewBox="0 0 375 90" className="text-1">
+    <div>
+      <div className="flex justify-center mb-2">
+        <Switch
+          options={["Per day", "Line graph"]}
+          value={viewType}
+          onChange={setViewType}
+          className="mb-2"
+        />
+      </div>
+      <svg viewBox="0 0 375 90" className="text-1">
       {/* Day labels */}
       <g style={{ fontSize: "8px", fill: "currentColor" }}>
         <text x="4" y="17">Mon</text>
@@ -152,6 +163,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
       </g>
 
       {/* Week columns */}
+      <g style={{ opacity: viewType === "Per day" ? 1 : 0.3, transition: "opacity 0.3s ease-in-out" }}>
       {weeksData.map((week, weekIndex) => (
         <g key={`week-${weekIndex}`} transform={`translate(${weekIndex * 50 + 35}, 0)`}>
           {week.map((day, dayIndex) => (
@@ -166,10 +178,11 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
           ))}
         </g>
       ))}
+      </g>
 
       {/* Line graph for cumulative time */}
       {cumulativeTimeData.points.length > 1 && (
-        <>
+        <g style={{ opacity: viewType === "Line graph" ? 1 : 0.1, transition: "opacity 0.3s ease-in-out" }}>
           {/* Line path */}
           <path
             d={`M${cumulativeTimeData.points.map(point => `${point[0]},${point[1]}`).join(' L')}`}
@@ -189,7 +202,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
               0 min
             </text>
           </g>
-        </>
+        </g>
       )}
 
       {/* Month and date labels */}
@@ -202,6 +215,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
         ))}
       </g>
     </svg>
+    </div>
   );
 };
 
