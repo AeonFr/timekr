@@ -1,0 +1,14 @@
+.show-ltr {
+  animation: show-ltr 0.3s ease-in-out;
+}
+
+@keyframes show-ltr {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
