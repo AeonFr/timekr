@@ -19,9 +19,23 @@ interface WeekLabel {
 }
 
 const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
-  commits = [],
-  startOfProject,
+  commits = [] as Commit[],
 }) => {
+  const startOfProject = useMemo(() => {
+    if (commits.length === 0) {
+      return +new Date();
+    }
+
+    const sortedCommits = commits.sort((c1, c2) => {
+      if (c1.commited_at < c2.commited_at) {
+        return -1;
+      }
+      return 1;
+    });
+
+    return sortedCommits[0].commited_at;
+  }, [commits]);
+
   const currentWeekday = moment().isoWeekday();
 
   // Helper function to get index string for a timestamp
