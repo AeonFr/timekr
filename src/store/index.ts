@@ -49,7 +49,7 @@ const retrieveState = (): Record<string, Project> => {
       const parsedProjects = JSON.parse(localStorageProjects || cookieProjects || '{}');
       if (parsedProjects) return parsedProjects;
     } catch (e) {
-      console.log('JSON parsing failed');
+      console.error('JSON parsing failed');
     }
   }
   return {};
@@ -171,7 +171,7 @@ const useStore = create<StoreState>((set, get) => ({
     const { projects } = get();
     
     if (!projects[project_slug]) {
-      console.warn('Project ' + project_slug + ' not found');
+      console.warn(`Project ${project_slug} not found`);
       return;
     }
     

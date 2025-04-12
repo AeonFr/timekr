@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import useStore from '../store/index';
+import useStore from '../store';
 import Logo from '../components/Logo';
 
 const ProjectsIndex: React.FC = () => {
-  const projects = useStore(state => state.projects);
+  const projects = useStore((state) => state.projects);
   const projectsArray = Object.entries(projects);
 
   return (
