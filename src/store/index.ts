@@ -197,6 +197,9 @@ const useStore = create<StoreState>((set, get) => ({
     commits[commitIndex] = {
       ...commits[commitIndex],
       amount: Number(commitData.amount),
+      commited_at: commitData.commited_at
+        ? Number(commitData.commited_at)
+        : commits[commitIndex].commited_at,
     };
 
     // Recalculate total time
