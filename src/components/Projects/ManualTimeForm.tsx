@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Icon from "../Icon";
 import TimeInput from "../TimeInput";
+import DateInput from "../DateInput";
 
 interface ManualTimeFormProps {
   onCommitTime: (data: { amount: number | string; date?: Date }) => void;
@@ -48,16 +49,10 @@ const ManualTimeForm: React.FC<ManualTimeFormProps> = ({ onCommitTime }) => {
           </div>
 
           <div className="mb-3">
-            <label className="block text-left">
-              <div className="px-2 text-1">Date and Time:</div>
-              <input
-                type="datetime-local"
-                className="input text-lg font-mono"
-                value={selectedDate}
-                style={{ maxWidth: "280px" }}
-                onChange={(e) => setSelectedDate(e.target.value)}
-              />
-            </label>
+            <DateInput
+              value={selectedDate}
+              onChange={setSelectedDate}
+            />
           </div>
 
           <div className="flex">

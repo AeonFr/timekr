@@ -5,6 +5,7 @@ import moment from "moment";
 import useStore from "../../store";
 
 import TimeInput from "../TimeInput";
+import DateInput from "../DateInput";
 import Icon from "../Icon";
 
 interface Commit {
@@ -181,17 +182,15 @@ const Commits: React.FC = () => {
                           </div>
 
                           <div className="mb-2">
-                            <label className="block text-sm mb-1">Date and Time:</label>
-                            <input
-                              type="datetime-local"
-                              className="input"
-                              value={editCommit.editDate}
-                              onChange={(e) =>
+                            <DateInput
+                              value={editCommit.editDate || ''}
+                              onChange={(value) =>
                                 setEditCommit({
                                   ...editCommit,
-                                  editDate: e.target.value,
+                                  editDate: value,
                                 })
                               }
+                              label="Date and Time:"
                             />
                           </div>
 
