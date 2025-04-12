@@ -9,6 +9,7 @@ interface Commit {
 
 interface CommitHistoryGraphProps {
   commits: Commit[];
+  totalTime?: number;
 }
 
 interface DayData {
@@ -19,6 +20,7 @@ interface DayData {
 
 const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
   commits = [] as Commit[],
+  totalTime = 0,
 }) => {
   // Find the earliest commit date or use current date if no commits
   const startOfProject = useMemo(() => {
@@ -101,6 +103,44 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     const intensity = Math.min(Math.max((100 / 480) * amount, 40), 100);
     return `hsla(207, 70%, 50%, ${intensity}%)`;
   };
+  
+  // Calculate cumulative time data for the line graph
+  const cumulativeTimeData = useMemo(() => {
+    // Create an array of daily totals for each week
+    const dailyTotals: number[] = [];
+    
+    // Flatten the weeks data and calculate daily totals
+    weeksData.forEach(week => {
+      week.forEach(day => {
+        dailyTotals.push(day.amount);
+      });
+    });
+    
+    // Calculate cumulative totals
+    const cumulativeTotals: number[] = [];
+    let runningTotal = 0;
+    
+    dailyTotals.forEach(amount => {
+      runningTotal += amount;
+      cumulativeTotals.push(runningTotal);
+    });
+    
+    // Get the maximum value for scaling
+    const maxTotal = Math.max(...cumulativeTotals, totalTime);
+    
+    // Calculate points for the line graph (x, y coordinates)
+    const points: [number, number][] = cumulativeTotals.map((total, index) => {
+      const x = 35 + Math.floor(index / 7) * 50 + (index % 7) * 7;
+      // Scale y value (70 is the max height of our graph area)
+      const y = maxTotal > 0 ? 70 - (total / maxTotal) * 60 : 70;
+      return [x, y];
+    });
+    
+    return {
+      points,
+      maxTotal,
+    };
+  }, [weeksData, totalTime]);
 
   return (
     <svg viewBox="0 0 335 90" className="text-1">
@@ -126,6 +166,43 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
           ))}
         </g>
       ))}
+      
+      {/* Line graph for cumulative time */}
+      {cumulativeTimeData.points.length > 1 && (
+        <>
+          {/* Line path */}
+          <path
+            d={`M${cumulativeTimeData.points.map(point => `${point[0]},${point[1]}`).join(' L')}`}
+            fill="none"
+            stroke="rgba(255, 99, 71, 0.8)"
+            strokeWidth="1.5"
+          />
+          
+          {/* Data points */}
+          {cumulativeTimeData.points.map((point, index) => (
+            <circle
+              key={`point-${index}`}
+              cx={point[0]}
+              cy={point[1]}
+              r="1.5"
+              fill="rgba(255, 99, 71, 0.8)"
+            />
+          ))}
+          
+          {/* Y-axis labels (right side) */}
+          <g style={{ fontSize: "8px", fill: "rgba(255, 99, 71, 0.9)" }}>
+            <text x="310" y="10" textAnchor="end">
+              {Math.round(cumulativeTimeData.maxTotal)} min
+            </text>
+            <text x="310" y="40" textAnchor="end">
+              {Math.round(cumulativeTimeData.maxTotal / 2)} min
+            </text>
+            <text x="310" y="70" textAnchor="end">
+              0 min
+            </text>
+          </g>
+        </>
+      )}
 
       {/* Month and date labels */}
       <g style={{ fontSize: "8px", fill: "currentColor" }}>

@@ -173,6 +173,7 @@ const Single: React.FC = () => {
 
       <CommitHistoryGraph
         commits={project.commits}
+        totalTime={project.time}
       />
 
       <hr className="mt-6" />
