@@ -82,9 +82,11 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     return weeksData.map(week => {
       const firstDay = week[0].date;
       const lastDay = week[6].date;
+      const firstMonth = firstDay.format('MMM');
+      const lastMonth = lastDay.format('MMM');
       
       return {
-        month: firstDay.format('MMM'),
+        month: firstMonth === lastMonth ? firstMonth : `${firstMonth}-${lastMonth}`,
         start: firstDay.format('DD'),
         end: lastDay.format('DD'),
       };
