@@ -174,7 +174,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
           <path
             d={`M${cumulativeTimeData.points.map(point => `${point[0]},${point[1]}`).join(' L')}`}
             fill="none"
-            stroke="rgba(255, 99, 71, 0.8)"
+            stroke="rgba(0, 0, 0, 0.8)"
             strokeWidth="1.5"
           />
           
@@ -185,19 +185,19 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
               cx={point[0]}
               cy={point[1]}
               r="1.5"
-              fill="rgba(255, 99, 71, 0.8)"
+              fill="rgba(0, 0, 0, 0.8)"
             />
           ))}
           
           {/* Y-axis labels (right side) */}
-          <g style={{ fontSize: "8px", fill: "rgba(255, 99, 71, 0.9)" }}>
-            <text x="310" y="10" textAnchor="end">
+          <g style={{ fontSize: "8px", fill: "rgba(0, 0, 0, 0.9)" }}>
+            <text x="330" y="10" textAnchor="end">
               {Math.round(cumulativeTimeData.maxTotal)} min
             </text>
-            <text x="310" y="40" textAnchor="end">
+            <text x="330" y="40" textAnchor="end">
               {Math.round(cumulativeTimeData.maxTotal / 2)} min
             </text>
-            <text x="310" y="70" textAnchor="end">
+            <text x="330" y="70" textAnchor="end">
               0 min
             </text>
           </g>
