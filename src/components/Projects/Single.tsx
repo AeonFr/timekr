@@ -11,7 +11,7 @@ interface Commit {
   amount: number | string;
 }
 
-interface Project {
+type Project = {
   name: string;
   time: number;
   commits: Commit[];
