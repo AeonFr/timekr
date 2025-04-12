@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "precommit": "npm run lint",
-    "format": "prettier -w src"
+    "format": "prettier -w src",
+    "postinstall": "simple-git-hooks"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
@@ -30,6 +31,8 @@
     "eslint": "^9.24.0",
     "globals": "^16.0.0",
     "prettier": "^3.5.3",
+    "pretty-quick": "^4.1.1",
+    "simple-git-hooks": "^2.12.1",
     "tailwindcss": "~0.6.6",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.29.1",
