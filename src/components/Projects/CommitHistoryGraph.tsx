@@ -146,18 +146,18 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
   }, [weeksData, totalTime]);
 
   return (
-    <div>
-      <div className="flex justify-center mb-2">
+    <div aria-hidden>
+      <div className="flex justify-end items-center mb-2">
+        <span className="text-xs text-grey-darker mr-2">Graph: </span>
         <Switch
           options={["Per day", "Line graph"]}
           value={viewType}
           onChange={setViewType}
-          className="mb-2"
         />
       </div>
       <svg
         viewBox={viewType === "Per day" ? "0 0 335 90" : "30 0 345 90"}
-        className="text-1"
+        className="text-1 cursor-default"
       >
         {/* Day labels */}
         <g style={{ fontSize: "8px", fill: "currentColor" }}>
