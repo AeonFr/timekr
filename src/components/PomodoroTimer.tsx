@@ -30,7 +30,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
         setTimerStopped(true);
       }
     };
-  }, [time]);
+  }, []);
 
   // Format time with leading zeros
   const twoDigits = (num: number): string => {
@@ -114,6 +114,9 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
   };
 
   const resetTimer = () => {
+    if (!confirm("Are you sure you want to reset the timer?")) {
+      return;
+    }
     setTimerStopped(true);
     setTime(1500);
     setPartialTimeCommiter(false);
@@ -146,27 +149,21 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
 
   return (
     <section>
-      <div className="block my-3 p-4 shadow-md bg-1 rounded-lg text-center">
-        <div className="m:inline-block mb-4 m:mb-0 px-4 text-3xl text-1 font-mono">
+      <div className="flex my-3 p-4 shadow-md bg-1 rounded-lg text-center">
+        <div className="m:inline-block mb-4 m:mb-0 px-4 text-3xl text-1 font-mono mr-auto">
           {prettyTime}
         </div>
 
         <button
           type="button"
           className="btn btn-primary align-top"
-          onClick={startTimer}
+          onClick={timerStopped ? startTimer : stopTimer}
         >
-          <Icon name="play" />
-          Start
-        </button>
-
-        <button
-          type="button"
-          className="btn btn-default align-top"
-          onClick={stopTimer}
-        >
-          <Icon name="pause" />
-          Stop
+          <Icon
+            name={timerStopped ? "play-circle" : "pause-circle"}
+            className="w-5 h-5"
+          />
+          {timerStopped ? " Start" : " Pause"}
         </button>
 
         <button
@@ -174,8 +171,8 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
           className="btn btn-danger align-top"
           onClick={resetTimer}
         >
-          <Icon name="refresh-ccw" />
-          Reset
+          <Icon name="x-circle" className="w-5 h-5" />
+          {" Reset"}
         </button>
       </div>
 
@@ -186,8 +183,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
         >
           <div className="font-bold text-left m-2">
             Commit {partialTimeCommiter} minute
-            {partialTimeCommiter > 1 ? "s" : ""}
-            and reset?
+            {partialTimeCommiter > 1 ? "s" : ""} and reset?
           </div>
           <button type="submit" className="ml-auto btn btn-primary">
             Commit

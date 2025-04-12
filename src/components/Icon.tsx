@@ -3,10 +3,11 @@ import { icons } from "feather-icons";
 import "./Icon.css";
 
 interface IconProps {
-  name?: string;
+  name: string;
+  className?: string;
 }
 
-const Icon: React.FC<IconProps> = ({ name = "x" }) => {
+const Icon: React.FC<IconProps> = ({ name = "x", className = "" }) => {
   // Create a safe HTML object from the SVG content
   const createMarkup = () => {
     return { __html: icons[name].contents };
@@ -14,7 +15,7 @@ const Icon: React.FC<IconProps> = ({ name = "x" }) => {
 
   return (
     <svg
-      className={`feather ${name}`}
+      className={`feather ${name} ${className}`}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="1em"

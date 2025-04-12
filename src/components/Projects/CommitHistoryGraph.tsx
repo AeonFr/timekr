@@ -69,7 +69,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
 
   // Method to determine fill color
   const getFill = (weekDiff: number, weekday: number): string => {
-    if (weekDiff === 1 && weekday > currentWeekday) {
+    if (weekDiff === 1 && weekday < currentWeekday) {
       return "rgba(127,127,127,0)";
     }
 
