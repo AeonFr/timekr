@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Icon from "./Icon";
-import "./PomodoroTimer.css";
 
 interface PomodoroTimerProps {
   onCommitTime: (data: { amount: number | string }) => void;

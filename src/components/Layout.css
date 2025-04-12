@@ -17,65 +17,50 @@ p {
 }
 
 .container {
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-  margin-left: auto;
-  margin-right: auto;
+  @apply my-6 mx-auto;
 }
 
 .btn {
-  border-width: 1px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  border-radius: 9999px;
-  cursor: default;
+  @apply border tracking-wide uppercase py-2 px-4 rounded-full cursor-default;
 }
 
 .btn-primary {
-  color: #3490dc;
-  border-color: #dae1e7;
+  @apply text-blue border-grey-light;
 }
 
 .dark-interface .btn-primary {
-  border-color: #1a1a1a;
+  @apply border-grey-darkest;
 }
 
 .btn-primary:hover {
-  background-color: #f8fafc;
+  @apply bg-blue-lightest;
 }
-
 .dark-interface .btn-primary:hover {
-  background-color: #1c3d5a;
+  @apply bg-blue-darkest;
 }
 
 .btn-danger {
-  color: #e3342f;
-  border-color: transparent;
+  @apply text-red border-transparent;
 }
 
 .btn-danger:hover {
-  background-color: #fcebea;
+  @apply bg-red-lightest;
 }
 
 .dark-interface .btn-danger:hover {
-  background-color: #3b0d0c;
+  @apply bg-red-darkest;
 }
 
 .btn-default {
-  color: #606f7b;
-  border-color: transparent;
+  @apply text-grey-darker border-transparent;
 }
 
 .btn-default:hover {
-  background-color: #f1f5f8;
+  @apply bg-grey-lighter;
 }
 
 .dark-interface .btn-default:hover {
-  background-color: #1a1a1a;
+  @apply bg-grey-darkest;
 }
 
 .btn-tab {
@@ -83,55 +68,46 @@ p {
 }
 
 .input {
-  color: #3d4852;
-  appearance: none;
-  background-color: transparent;
-  width: 100%;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  line-height: 1.25;
+  @apply text-grey-darkest appearance-none bg-transparent w-full py-1 px-2 leading-tight;
 }
 
 .dark-interface .input {
-  color: #b8c2cc;
+  @apply text-grey;
 }
 
 .input:focus {
-  outline: none;
+  @apply outline-none;
 }
 
 .input-error {
-  background-color: #fcebea;
+  @apply bg-red-lightest;
 }
 
 .dark-interface .input-error {
-  background-color: #3b0d0c;
+  @apply bg-red-darkest;
 }
 
 .bg-1 {
-  background-color: #f8fafc;
+  @apply bg-grey-lightest;
 }
 
 .hover\:bg-2:hover {
-  background-color: #f1f5f8;
+  @apply bg-grey-lighter;
 }
 
 .dark-interface .bg-1 {
-  background-color: #000;
+  @apply bg-black;
 }
 
 .dark-interface .hover\:bg-2:hover {
-  background-color: #1a1a1a;
+  @apply bg-grey-darkest;
 }
 
 .text-1 {
-  color: #606f7b;
+  @apply text-grey-darker;
 }
-
 .dark-interface .text-1 {
-  color: #b8c2cc;
+  @apply text-grey;
 }
 
 .childs-animated > * > *,
@@ -143,14 +119,12 @@ p {
   animation-fill-mode: forwards;
   animation-delay: calc(var(--delay-increm) * 7);
 }
-
 @keyframes show-ltr {
   to {
     opacity: 1;
     transform: translateX(0);
   }
 }
-
 .childs-animated > * > *:nth-child(1) {
   animation-delay: 0s;
 }
