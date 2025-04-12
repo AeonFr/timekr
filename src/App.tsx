@@ -1,11 +1,16 @@
-import React from 'react';
-import '../assets/css/tailwind.css';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React from "react";
+import "../assets/css/tailwind.css";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
-import Layout from './components/Layout';
-import ProjectsIndex from './pages/ProjectsIndex';
-import ProjectSingle from './pages/ProjectSingle';
-import ProjectCommits from './pages/ProjectCommits';
+import Layout from "./components/Layout";
+import ProjectsIndex from "./pages/ProjectsIndex";
+import ProjectSingle from "./pages/ProjectSingle";
+import ProjectCommits from "./pages/ProjectCommits";
 
 const App: React.FC = () => {
   return (

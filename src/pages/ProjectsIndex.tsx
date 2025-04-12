@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import useStore from '../store';
-import Logo from '../components/Logo';
+import React from "react";
+import { Link } from "react-router-dom";
+import useStore from "../store";
+import Logo from "../components/Logo";
 
 const ProjectsIndex: React.FC = () => {
   const projects = useStore((state) => state.projects);
@@ -10,15 +10,15 @@ const ProjectsIndex: React.FC = () => {
   return (
     <div className="text-center">
       <Logo />
-      
+
       <h1 className="text-xl tracking-wide uppercase font-light leading-loose">
         Welcome to Timekr
       </h1>
-      
+
       <p className="text-lg leading-normal">
         A simple time tracking app for your projects.
       </p>
-      
+
       {projectsArray.length > 0 ? (
         <div className="mt-4">
           <h2 className="text-lg leading-normal">Your Projects:</h2>

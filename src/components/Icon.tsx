@@ -1,11 +1,11 @@
-import React from 'react';
-import { icons } from 'feather-icons';
+import React from "react";
+import { icons } from "feather-icons";
 
 interface IconProps {
   name?: string;
 }
 
-const Icon: React.FC<IconProps> = ({ name = 'x' }) => {
+const Icon: React.FC<IconProps> = ({ name = "x" }) => {
   // Create a safe HTML object from the SVG content
   const createMarkup = () => {
     return { __html: icons[name].contents };
