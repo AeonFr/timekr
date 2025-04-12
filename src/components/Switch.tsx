@@ -14,20 +14,22 @@ const Switch: React.FC<SwitchProps> = ({
   className = ""
 }) => {
   return (
-    <div className={`inline-flex rounded-md shadow-sm ${className}`}>
+    <div className={`inline-flex shadow-md ${className}`}>
       {options.map((option) => (
         <button
           key={option}
           type="button"
-          className={`px-3 py-1 text-xs font-medium ${value === option
-              ? "bg-blue-500 text-white"
-              : "bg-white text-gray-700 hover:bg-gray-50"
-            } ${options.indexOf(option) === 0
-              ? "rounded-l-md"
+          className={`px-2 py-1 text-xs ${
+            value === option
+              ? "bg-blue-dark text-white"
+              : "bg-white text-grey-darker hover:bg-grey-lightest"
+          } ${
+            options.indexOf(option) === 0
+              ? "rounded-l"
               : options.indexOf(option) === options.length - 1
-                ? "rounded-r-md"
+                ? "rounded-r"
                 : ""
-            }`}
+          }`}
           onClick={() => onChange(option)}
         >
           {option}
