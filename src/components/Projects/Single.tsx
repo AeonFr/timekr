@@ -6,11 +6,6 @@ import Icon from '../Icon';
 import CommitHistoryGraph from './CommitHistoryGraph';
 import TimeInput from '../TimeInput';
 
-interface Commit {
-  commited_at: number;
-  amount: number | string;
-}
-
 const Single: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
