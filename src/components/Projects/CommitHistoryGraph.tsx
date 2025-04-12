@@ -147,7 +147,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
 
   // State for animated viewBox
   const [viewBox, setViewBox] = useState("0 0 335 90");
-  
+
   // Update viewBox with animation when viewType changes
   useEffect(() => {
     if (viewType === "Per day") {
@@ -156,24 +156,24 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
       const duration = 300; // 300ms animation
       const startValue = 30;
       const endValue = 0;
-      
+
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        
+
         // Ease out function
         const easeProgress = 1 - Math.pow(1 - progress, 2);
-        
+
         const currentX = startValue - (startValue - endValue) * easeProgress;
         const currentWidth = 345 - (345 - 335) * easeProgress;
-        
+
         setViewBox(`${currentX} 0 ${currentWidth} 90`);
-        
+
         if (progress < 1) {
           requestAnimationFrame(animate);
         }
       };
-      
+
       requestAnimationFrame(animate);
     } else {
       // Animate from per day to line graph view
@@ -181,24 +181,24 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
       const duration = 300; // 300ms animation
       const startValue = 0;
       const endValue = 30;
-      
+
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        
+
         // Ease out function
         const easeProgress = 1 - Math.pow(1 - progress, 2);
-        
+
         const currentX = startValue + (endValue - startValue) * easeProgress;
         const currentWidth = 335 + (345 - 335) * easeProgress;
-        
+
         setViewBox(`${currentX} 0 ${currentWidth} 90`);
-        
+
         if (progress < 1) {
           requestAnimationFrame(animate);
         }
       };
-      
+
       requestAnimationFrame(animate);
     }
   }, [viewType]);
@@ -216,6 +216,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
       <svg
         viewBox={viewBox}
         className="text-1 cursor-default"
+        style={{ height: "142px" }}
       >
         {/* Day labels */}
         <g style={{ fontSize: "8px", fill: "currentColor" }}>
