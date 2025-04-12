@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import useStore from '../store';
+import useStore from '../store/index';
 import Logo from '../components/Logo';
 
 const ProjectsIndex: React.FC = () => {
