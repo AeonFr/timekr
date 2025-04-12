@@ -1,0 +1,148 @@
+body {
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+body.dark-interface {
+  color: #a0a0a0;
+  background-color: #222222;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.container {
+  @apply my-6 mx-auto;
+}
+
+.btn {
+  @apply border tracking-wide uppercase py-2 px-4 rounded-full cursor-default;
+}
+
+.btn-primary {
+  @apply text-blue border-grey-light;
+}
+
+.dark-interface .btn-primary {
+  @apply border-grey-darkest;
+}
+
+.btn-primary:hover {
+  @apply bg-blue-lightest;
+}
+.dark-interface .btn-primary:hover {
+  @apply bg-blue-darkest;
+}
+
+.btn-danger {
+  @apply text-red border-transparent;
+}
+
+.btn-danger:hover {
+  @apply bg-red-lightest;
+}
+
+.dark-interface .btn-danger:hover {
+  @apply bg-red-darkest;
+}
+
+.btn-default {
+  @apply text-grey-darker border-transparent;
+}
+
+.btn-default:hover {
+  @apply bg-grey-lighter;
+}
+
+.dark-interface .btn-default:hover {
+  @apply bg-grey-darkest;
+}
+
+.btn-tab {
+  border-bottom-color: transparent !important;
+}
+
+.input {
+  @apply text-grey-darkest appearance-none bg-transparent w-full py-1 px-2 leading-tight;
+}
+
+.dark-interface .input {
+  @apply text-grey;
+}
+
+.input:focus {
+  @apply outline-none;
+}
+
+.input-error {
+  @apply bg-red-lightest;
+}
+
+.dark-interface .input-error {
+  @apply bg-red-darkest;
+}
+
+.bg-1 {
+  @apply bg-grey-lightest;
+}
+
+.hover\:bg-2:hover {
+  @apply bg-grey-lighter;
+}
+
+.dark-interface .bg-1 {
+  @apply bg-black;
+}
+
+.dark-interface .hover\:bg-2:hover {
+  @apply bg-grey-darkest;
+}
+
+.text-1 {
+  @apply text-grey-darker;
+}
+.dark-interface .text-1 {
+  @apply text-grey;
+}
+
+.childs-animated > * > *,
+.show-ltr {
+  --delay-increm: 0.03s;
+  transform: translateX(-2rem);
+  opacity: 0;
+  animation: show-ltr 0.2s cubic-bezier(0.55, 0, 0.1, 1);
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--delay-increm) * 7);
+}
+@keyframes show-ltr {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.childs-animated > * > *:nth-child(1) {
+  animation-delay: 0s;
+}
+.childs-animated > * > *:nth-child(2) {
+  animation-delay: var(--delay-increm);
+}
+.childs-animated > * > *:nth-child(3) {
+  animation-delay: calc(var(--delay-increm) * 2);
+}
+.childs-animated > * > *:nth-child(4) {
+  animation-delay: calc(var(--delay-increm) * 3);
+}
+.childs-animated > * > *:nth-child(5) {
+  animation-delay: calc(var(--delay-increm) * 4);
+}
+.childs-animated > * > *:nth-child(6) {
+  animation-delay: calc(var(--delay-increm) * 5);
+}
+.childs-animated > * > *:nth-child(7) {
+  animation-delay: calc(var(--delay-increm) * 6);
+}

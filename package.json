@@ -5,29 +5,37 @@
   "author": "aeonfr",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "precommit": "npm run lint"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "precommit": "npm run lint",
+    "format": "prettier -w src",
+    "postinstall": "simple-git-hooks"
   },
   "dependencies": {
-    "cross-env": "^5.2.0",
+    "@vitejs/plugin-react": "^4.3.4",
     "feather-icons": "^4.7.3",
     "file-saver": "^2.0.0-rc.3",
     "js-cookie": "^2.2.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "moment": "^2.22.2",
-    "nuxt": "^2.0.0"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router": "^7.5.0",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "nodemon": "^1.11.0",
-    "babel-eslint": "^8.2.1",
-    "eslint": "^5.0.1",
-    "eslint-loader": "^2.0.0",
-    "eslint-plugin-vue": "^4.0.0",
+    "@eslint/js": "^9.24.0",
     "autoprefixer": "^8.6.4",
-    "tailwindcss": "~0.6.6"
+    "eslint": "^9.24.0",
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3",
+    "pretty-quick": "^4.1.1",
+    "simple-git-hooks": "^2.12.1",
+    "tailwindcss": "~0.6.6",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.29.1",
+    "vite": "^6.2.6"
   }
 }
