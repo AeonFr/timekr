@@ -1,131 +1,182 @@
-import Vuex from 'vuex';
-import { sortBy, find } from 'lodash';
+import { create } from 'zustand';
+import { sortBy } from 'lodash';
 import Cookie from 'js-cookie';
 
-function saveState(state){
-  let stringifiedState = JSON.stringify(state);
-
+// Helper functions for state persistence
+const saveState = (projects) => {
+  const stringifiedState = JSON.stringify(projects);
   localStorage.setItem('projects', stringifiedState);
-  
   Cookie.set('projects', stringifiedState, { expires: 365 });
+};
 
-  console.log(Cookie.get('projects'))
-}
-
-function retrieveState(){
-  let localStorageProjects = localStorage.getItem('projects');
-  let cookieProjects = Cookie.get('projects');
-  if (localStorageProjects || cookieProjects){
-    try{
-      let parsedProjects = JSON.parse(localStorageProjects || cookieProjects);
-      if (parsedProjects)
-        return parsedProjects;
+const retrieveState = () => {
+  const localStorageProjects = localStorage.getItem('projects');
+  const cookieProjects = Cookie.get('projects');
+  
+  if (localStorageProjects || cookieProjects) {
+    try {
+      const parsedProjects = JSON.parse(localStorageProjects || cookieProjects);
+      if (parsedProjects) return parsedProjects;
     } catch (e) {
-      console.log('JSON parsing failed')
+      console.log('JSON parsing failed');
     }
   }
   return {};
-}
+};
 
-const createStore = () => {
-  return new Vuex.Store({
-    state: {
-      projects: retrieveState(),
-    },
-    mutations: {
-      addProject (state, { name }) {
-        if (state.projects.name)
-            return alert('Theres already a project with this name.',
-            'Try another name, or edit the existing project instead.');
-
-        state.projects[name] = {
-            name: name,
-            time: 0,
-            commits: [],
-            created_at: + new Date(),
-            updated_at: + new Date()
-        };
-        
-        // commit
-        saveState(state.projects);
-      },
-      updateProject (state, {id, name}){
-        state.projects[id].name = name;
-        state.projects[id].updated_at = + new Date();
-
-        // commit
-        saveState(state.projects);
-      },
-      deleteProject (state, { name }) {
-        delete state.projects[name];
-        state.projects = Object.assign({}, state.projects);
-        
-        // commit
-        saveState(state.projects);
-      },
-      commitTime(state, { project_id, amount }) {
-        
-        state.projects[project_id].commits.push({
-          amount,
-          commited_at: + new Date()
-        });
-
-        state.projects[project_id].commits = sortBy(state.projects[project_id].commits, ['commited_at']).reverse();
-
-        let assign = {};
-        assign[project_id] = Object.assign(state.projects[project_id], {
-          time: parseInt(state.projects[project_id].time) + parseInt(amount),
-          updated_at: + new Date()
-        });
-
-        state.projects = Object.assign({}, state.projects, assign);
-
-        // commit
-        saveState(state.projects);
-      },
-      editProjectSettings(state, { project_id, timeBudget, deadline }) {
-        if (timeBudget) {
-          let assign = {};
-          assign[project_id] = Object.assign(state.projects[project_id], {
-            time_budget: timeBudget,
-            updated_at: + new Date()
-          });
-          state.projects = Object.assign({}, state.projects, assign);
-        }
-
-        if (deadline) {
-          let assign = {};
-          assign[project_id] = Object.assign(state.projects[project_id], {
-            deadline,
-            updated_at: + new Date()
-          });
-          state.projects = Object.assign({}, state.projects, assign);
-        }
-
-        // commit
-        saveState(state.projects);
-      },
-      importProjects(state, projects){
-        state.projects = projects;
-        saveState(projects);
-      },
-      editCommit(state, { project_slug, commitData }){
-        if (!state.projects[project_slug])
-          return console.warn('Project ' + project_slug + ' not found');
-        let commit = find(state.projects[project_slug].commits, { 'commited_at': commitData.commited_at });
-        if (!commit)
-          return console.warn('Commit not found on project');
-
-        commit.amount = Number(commitData.amount);
-
-        let assign = {};
-        assign[project_slug] = state.projects[project_slug];
-        state.projects = Object.assign({}, state.projects, assign);
-
-        saveState(state.projects);
-      }
+// Define the store
+const useStore = create((set, get) => ({
+  projects: retrieveState(),
+  
+  addProject: (name) => {
+    const { projects } = get();
+    
+    if (projects[name]) {
+      alert('There\'s already a project with this name. Try another name, or edit the existing project instead.');
+      return;
     }
-  })
-}
+    
+    const newProjects = {
+      ...projects,
+      [name]: {
+        name,
+        time: 0,
+        commits: [],
+        created_at: +new Date(),
+        updated_at: +new Date()
+      }
+    };
+    
+    saveState(newProjects);
+    set({ projects: newProjects });
+  },
+  
+  updateProject: (id, name) => {
+    const { projects } = get();
+    
+    if (!projects[id]) return;
+    
+    const updatedProjects = {
+      ...projects,
+      [id]: {
+        ...projects[id],
+        name,
+        updated_at: +new Date()
+      }
+    };
+    
+    saveState(updatedProjects);
+    set({ projects: updatedProjects });
+  },
+  
+  deleteProject: (name) => {
+    const { projects } = get();
+    const newProjects = { ...projects };
+    delete newProjects[name];
+    
+    saveState(newProjects);
+    set({ projects: newProjects });
+  },
+  
+  commitTime: (project_id, amount) => {
+    const { projects } = get();
+    
+    if (!projects[project_id]) return;
+    
+    const project = projects[project_id];
+    const newCommit = {
+      amount,
+      commited_at: +new Date()
+    };
+    
+    const updatedCommits = sortBy([...project.commits, newCommit], ['commited_at']).reverse();
+    
+    const updatedProject = {
+      ...project,
+      commits: updatedCommits,
+      time: parseInt(project.time) + parseInt(amount),
+      updated_at: +new Date()
+    };
+    
+    const updatedProjects = {
+      ...projects,
+      [project_id]: updatedProject
+    };
+    
+    saveState(updatedProjects);
+    set({ projects: updatedProjects });
+  },
+  
+  editProjectSettings: (project_id, timeBudget, deadline) => {
+    const { projects } = get();
+    
+    if (!projects[project_id]) return;
+    
+    const updatedProject = { ...projects[project_id], updated_at: +new Date() };
+    
+    if (timeBudget !== undefined) {
+      updatedProject.time_budget = timeBudget;
+    }
+    
+    if (deadline !== undefined) {
+      updatedProject.deadline = deadline;
+    }
+    
+    const updatedProjects = {
+      ...projects,
+      [project_id]: updatedProject
+    };
+    
+    saveState(updatedProjects);
+    set({ projects: updatedProjects });
+  },
+  
+  importProjects: (newProjects) => {
+    saveState(newProjects);
+    set({ projects: newProjects });
+  },
+  
+  editCommit: (project_slug, commitData) => {
+    const { projects } = get();
+    
+    if (!projects[project_slug]) {
+      console.warn('Project ' + project_slug + ' not found');
+      return;
+    }
+    
+    const project = projects[project_slug];
+    const commits = [...project.commits];
+    
+    const commitIndex = commits.findIndex(c => c.commited_at === commitData.commited_at);
+    
+    if (commitIndex === -1) {
+      console.warn('Commit not found on project');
+      return;
+    }
+    
+    commits[commitIndex] = {
+      ...commits[commitIndex],
+      amount: Number(commitData.amount)
+    };
+    
+    // Recalculate total time
+    const totalTime = commits.reduce((sum, commit) => sum + Number(commit.amount), 0);
+    
+    const updatedProject = {
+      ...project,
+      commits,
+      time: totalTime,
+      updated_at: +new Date()
+    };
+    
+    const updatedProjects = {
+      ...projects,
+      [project_slug]: updatedProject
+    };
+    
+    saveState(updatedProjects);
+    set({ projects: updatedProjects });
+  }
+}));
 
-export default createStore
+export default useStore;

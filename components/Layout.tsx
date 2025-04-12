@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 import saveAs from 'file-saver';
+import useStore from '../store';
 
 import ProjectsList from './Projects/List';
 import Icon from './Icon';
@@ -18,9 +18,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     localStorage.getItem('cookie_consent') || false
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const dispatch = useDispatch();
   const location = useLocation();
-  const projects = useSelector((state: any) => state.projects);
+  
+  const projects = useStore(state => state.projects);
+  const importProjects = useStore(state => state.importProjects);
 
   // Apply dark interface effect
   useEffect(() => {
@@ -68,11 +69,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           return;
         }
         
-        const projects = JSON.parse(evt.target.result as string);
-        dispatch({
-          type: 'importProjects',
-          payload: projects
-        });
+        const projectsData = JSON.parse(evt.target.result as string);
+        importProjects(projectsData);
         
         setShowImportForm(false);
         return true;

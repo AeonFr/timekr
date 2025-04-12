@@ -29,7 +29,6 @@ interface RootState {
 const Single: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   
   const [editingProjectName, setEditingProjectName] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
@@ -39,9 +38,13 @@ const Single: React.FC = () => {
   const [showEditProjectSettings, setShowEditProjectSettings] = useState(0);
   const [projectTimeBudget, setProjectTimeBudget] = useState<number | string>('');
   
-  const project = useSelector((state: RootState) => 
-    state.projects[slug || ''] || -1
-  );
+  const projects = useStore(state => state.projects);
+  const updateProject = useStore(state => state.updateProject);
+  const commitTime = useStore(state => state.commitTime);
+  const editProjectSettings = useStore(state => state.editProjectSettings);
+  const deleteProject = useStore(state => state.deleteProject);
+  
+  const project = slug ? (projects[slug] || -1) : -1;
 
   useEffect(() => {
     if (project !== -1 && project.time_budget) {
@@ -73,62 +76,50 @@ const Single: React.FC = () => {
   }, [project]);
 
   // Event handlers
-  const editProjectName = (e: React.FormEvent) => {
+  const handleEditProjectName = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!newProjectName) {
       return setInvalidProjectName(1);
     }
     
-    dispatch({
-      type: 'updateProject',
-      payload: { id: slug, name: newProjectName }
-    });
+    if (slug) {
+      updateProject(slug, newProjectName);
+    }
     
     setNewProjectName('');
     setEditingProjectName(false);
   };
 
-  const commitTime = ({ amount }: { amount: number | string }) => {
+  const handleCommitTime = ({ amount }: { amount: number | string }) => {
     if (slug) {
-      dispatch({
-        type: 'commitTime',
-        payload: { project_id: slug, amount }
-      });
+      commitTime(slug, amount);
     }
   };
 
-  const commitTimeManually = (e: React.FormEvent) => {
+  const handleCommitTimeManually = (e: React.FormEvent) => {
     e.preventDefault();
-    commitTime({ amount: insertedTime });
+    handleCommitTime({ amount: insertedTime });
     setInsertedTime('');
     setShowInsertTimeForm(0);
   };
 
-  const editProjectSettings = (e: React.FormEvent) => {
+  const handleEditProjectSettings = (e: React.FormEvent) => {
     e.preventDefault();
     
-    dispatch({
-      type: 'editProjectSettings',
-      payload: {
-        project_id: slug,
-        timeBudget: projectTimeBudget,
-      }
-    });
+    if (slug) {
+      editProjectSettings(slug, projectTimeBudget);
+    }
 
     setShowEditProjectSettings(0);
   };
 
-  const deleteProject = () => {
-    if (!window.confirm(`Are you sure you want to delete ${slug}?`)) {
+  const handleDeleteProject = () => {
+    if (!slug || !window.confirm(`Are you sure you want to delete ${slug}?`)) {
       return false;
     }
     
-    dispatch({
-      type: 'deleteProject',
-      payload: { name: slug }
-    });
-    
+    deleteProject(slug);
     navigate('/');
   };
 
@@ -151,7 +142,7 @@ const Single: React.FC = () => {
       ) : (
         <form
           className="pb-3 m:flex items-center"
-          onSubmit={editProjectName}
+          onSubmit={handleEditProjectName}
         >
           <input
             value={newProjectName}
@@ -181,7 +172,7 @@ const Single: React.FC = () => {
         </form>
       )}
       
-      <PomodoroTimer onCommitTime={commitTime} />
+      <PomodoroTimer onCommitTime={handleCommitTime} />
 
       <section
         id="stats"
@@ -229,7 +220,7 @@ const Single: React.FC = () => {
       {showInsertTimeForm ? (
         <form
           className="m:flex items-end p-2 bg-1 shadow-md my-2 rounded-lg"
-          onSubmit={commitTimeManually}
+          onSubmit={handleCommitTimeManually}
         >
           <TimeInput 
             value={insertedTime} 
@@ -262,7 +253,7 @@ const Single: React.FC = () => {
       {showEditProjectSettings ? (
         <form
           className="m:flex items-end p-2 bg-1 shadow-md my-2 rounded-lg"
-          onSubmit={editProjectSettings}
+          onSubmit={handleEditProjectSettings}
         >
           <TimeInput 
             value={projectTimeBudget} 
@@ -286,7 +277,7 @@ const Single: React.FC = () => {
 
       <button
         className="block mt-2 btn btn-danger"
-        onClick={deleteProject}
+        onClick={handleDeleteProject}
       >
         <Icon name="trash" /> 
         Delete project

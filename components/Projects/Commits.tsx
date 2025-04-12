@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { groupBy, sumBy } from 'lodash';
 import moment from 'moment';
-import { useSelector, useDispatch } from 'react-redux';
+import useStore from '../../store';
 
 import TimeInput from '../TimeInput';
 import Icon from '../Icon';
@@ -17,20 +17,14 @@ interface Project {
   commits: Commit[];
 }
 
-interface RootState {
-  projects: {
-    [key: string]: Project;
-  };
-}
-
 const Commits: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [editCommit, setEditCommit] = useState<Commit | false>(false);
-  const dispatch = useDispatch();
   
-  const project = useSelector((state: RootState) => 
-    state.projects[slug] || { name: '', commits: [] }
-  );
+  const projects = useStore(state => state.projects);
+  const editCommitAction = useStore(state => state.editCommit);
+  
+  const project = slug ? (projects[slug] || { name: '', commits: [] }) : { name: '', commits: [] };
 
   // Computed property converted to useMemo
   const commitsByDate = useMemo(() => {
@@ -64,14 +58,8 @@ const Commits: React.FC = () => {
   };
 
   const submitEditedCommit = () => {
-    if (editCommit) {
-      dispatch({
-        type: 'editCommit',
-        payload: {
-          project_slug: slug,
-          commitData: editCommit
-        }
-      });
+    if (editCommit && slug) {
+      editCommitAction(slug, editCommit);
       setEditCommit(false);
     }
   };

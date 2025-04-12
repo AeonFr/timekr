@@ -1,38 +1,28 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import useStore from '../../store';
 import Icon from '../Icon';
 
 interface Project {
   name: string;
 }
 
-interface RootState {
-  projects: {
-    [key: string]: Project;
-  };
-}
-
 const List: React.FC = () => {
   const [newProjectName, setNewProjectName] = useState('');
   const [invalidProjectName, setInvalidProjectName] = useState(0);
   const { slug } = useParams<{ slug?: string }>();
-  const dispatch = useDispatch();
   
-  const projects = useSelector((state: RootState) => state.projects);
+  const projects = useStore(state => state.projects);
+  const addProject = useStore(state => state.addProject);
 
-  const addProject = (e: React.FormEvent) => {
+  const handleAddProject = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!newProjectName) {
       return setInvalidProjectName(1);
     }
     
-    dispatch({
-      type: 'addProject',
-      payload: { name: newProjectName }
-    });
-    
+    addProject(newProjectName);
     setNewProjectName('');
   };
 
