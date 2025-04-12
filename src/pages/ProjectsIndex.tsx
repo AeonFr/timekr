@@ -29,7 +29,7 @@ const ProjectsIndex: React.FC = () => {
                 <li key={slug} className="my-2">
                   <Link
                     to={`/project/${slug}`}
-                    className="btn btn-primary no-underline"
+                    className="btn btn-primary no-underline block my-4"
                   >
                     {project.name}
                   </Link>

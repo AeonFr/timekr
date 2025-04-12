@@ -1,5 +1,5 @@
 import React from "react";
-import "../assets/css/tailwind.css";
+import "./css/tailwind.css";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router";
 
 import ProjectsIndex from "./pages/ProjectsIndex";
