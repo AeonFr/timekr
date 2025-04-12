@@ -113,8 +113,11 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
     }
   };
 
-  const resetTimer = () => {
-    if (!confirm("Are you sure you want to reset the timer?")) {
+  const resetTimer = (askConfirmation = true) => {
+    if (
+      askConfirmation &&
+      !confirm("Are you sure you want to reset the timer?")
+    ) {
       return;
     }
     setTimerStopped(true);
@@ -142,7 +145,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
     e.preventDefault();
     if (partialTimeCommiter !== false) {
       onCommitTime({ amount: partialTimeCommiter });
-      resetTimer();
+      resetTimer(false);
       setPartialTimeCommiter(false);
     }
   };
