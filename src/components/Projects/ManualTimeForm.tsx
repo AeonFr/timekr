@@ -3,16 +3,22 @@ import Icon from "../Icon";
 import TimeInput from "../TimeInput";
 
 interface ManualTimeFormProps {
-  onCommitTime: (data: { amount: number | string }) => void;
+  onCommitTime: (data: { amount: number | string; date?: Date }) => void;
 }
 
 const ManualTimeForm: React.FC<ManualTimeFormProps> = ({ onCommitTime }) => {
   const [showInsertTimeForm, setShowInsertTimeForm] = useState(0);
   const [insertedTime, setInsertedTime] = useState<number | string>(0);
+  const [selectedDate, setSelectedDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
 
   const handleCommitTimeManually = (e: React.FormEvent) => {
     e.preventDefault();
-    onCommitTime({ amount: insertedTime });
+    onCommitTime({ 
+      amount: insertedTime,
+      date: selectedDate ? new Date(selectedDate) : undefined
+    });
     setInsertedTime("");
     setShowInsertTimeForm(0);
   };
@@ -31,23 +37,39 @@ const ManualTimeForm: React.FC<ManualTimeFormProps> = ({ onCommitTime }) => {
 
       {showInsertTimeForm ? (
         <form
-          className="m:flex items-end p-2 bg-1 shadow-md my-2 rounded-lg"
+          className="p-2 bg-1 shadow-md my-2 rounded-lg"
           onSubmit={handleCommitTimeManually}
         >
-          <TimeInput
-            value={insertedTime}
-            onChange={(value) => setInsertedTime(value)}
-          />
-          <button type="submit" className="mt-2 btn btn-primary">
-            Insert
-          </button>
-          <button
-            type="button"
-            className="mt-2 btn btn-default ml-1"
-            onClick={() => setShowInsertTimeForm(0)}
-          >
-            Cancel
-          </button>
+          <div className="mb-2">
+            <label className="block text-sm mb-1">Time amount:</label>
+            <TimeInput
+              value={insertedTime}
+              onChange={(value) => setInsertedTime(value)}
+            />
+          </div>
+          
+          <div className="mb-2">
+            <label className="block text-sm mb-1">Date:</label>
+            <input
+              type="date"
+              className="input"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex">
+            <button type="submit" className="mt-2 btn btn-primary">
+              Insert
+            </button>
+            <button
+              type="button"
+              className="mt-2 btn btn-default ml-1"
+              onClick={() => setShowInsertTimeForm(0)}
+            >
+              Cancel
+            </button>
+          </div>
         </form>
       ) : null}
     </>

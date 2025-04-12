@@ -72,9 +72,15 @@ const Single: React.FC = () => {
     setEditingProjectName(false);
   };
 
-  const handleCommitTime = ({ amount }: { amount: number | string }) => {
+  const handleCommitTime = ({ 
+    amount, 
+    date 
+  }: { 
+    amount: number | string; 
+    date?: Date 
+  }) => {
     if (slug) {
-      commitTime(slug, amount);
+      commitTime(slug, amount, date);
     }
   };
 
