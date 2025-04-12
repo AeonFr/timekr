@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import moment from "moment";
-import { mapValues, groupBy, sumBy } from "lodash";
+import { groupBy, sumBy } from "lodash";
 
 interface Commit {
   commited_at: number;
@@ -9,145 +9,128 @@ interface Commit {
 
 interface CommitHistoryGraphProps {
   commits: Commit[];
-  startOfProject?: number;
 }
 
-interface WeekLabel {
-  month: string;
-  start: string;
-  end: string;
+interface DayData {
+  date: moment.Moment;
+  amount: number;
+  isEmpty: boolean;
 }
 
 const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
   commits = [] as Commit[],
 }) => {
+  // Find the earliest commit date or use current date if no commits
   const startOfProject = useMemo(() => {
     if (commits.length === 0) {
-      return +new Date();
+      return moment();
     }
-
-    const sortedCommits = commits.sort((c1, c2) => {
-      if (c1.commited_at < c2.commited_at) {
-        return -1;
-      }
-      return 1;
-    });
-
-    return sortedCommits[0].commited_at;
+    
+    const sortedCommits = [...commits].sort((a, b) => a.commited_at - b.commited_at);
+    return moment(sortedCommits[0].commited_at);
   }, [commits]);
 
-  const currentWeekday = moment().isoWeekday();
-
-  // Helper function to get index string for a timestamp
-  const indStr = (timestamp: number): [number, number] => {
-    const commitedAt = moment(timestamp);
-    const startOfWeek = moment().startOf("week");
-    const weekday = commitedAt.isoWeekday();
-    const weekDiff =
-      moment.duration(commitedAt.startOf("week").diff(startOfWeek)).asWeeks() -
-      1;
-    return [Math.abs(Math.ceil(weekDiff)), weekday];
-  };
-
-  // Computed properties as memoized values
-  const commitsGrouped = useMemo(() => {
-    return mapValues(
-      groupBy(commits, (c) => {
-        const ind = indStr(c.commited_at);
-        return `${ind[0]}-${ind[1]}`;
-      }),
-      (gr) => {
-        return sumBy(gr, (c) => Number(c.amount));
-      },
+  // Group commits by day
+  const commitsByDay = useMemo(() => {
+    const grouped = groupBy(commits, (commit) => 
+      moment(commit.commited_at).format('YYYY-MM-DD')
     );
+    
+    // Sum the amounts for each day
+    const result: Record<string, number> = {};
+    Object.entries(grouped).forEach(([day, dayCommits]) => {
+      result[day] = sumBy(dayCommits, commit => Number(commit.amount));
+    });
+    
+    return result;
   }, [commits]);
 
-  const startOfProjectIndStr = useMemo(() => {
-    if (!startOfProject) return false;
-    return indStr(startOfProject);
-  }, [startOfProject]);
+  // Generate data for the last 6 weeks
+  const weeksData = useMemo(() => {
+    const today = moment();
+    const weeks: DayData[][] = [];
+    
+    // Generate 6 weeks of data
+    for (let weekIndex = 0; weekIndex < 6; weekIndex++) {
+      const week: DayData[] = [];
+      
+      // For each day of the week (Monday = 1, Sunday = 7)
+      for (let dayIndex = 1; dayIndex <= 7; dayIndex++) {
+        // Calculate the date for this cell
+        const date = moment(today)
+          .subtract(weekIndex, 'weeks')
+          .day(dayIndex === 7 ? 0 : dayIndex); // Convert to JS day format (0 = Sunday)
+        
+        const dateKey = date.format('YYYY-MM-DD');
+        const amount = commitsByDay[dateKey] || 0;
+        
+        // Check if this date is before the project started
+        const isEmpty = date.isBefore(startOfProject, 'day') || 
+                       date.isAfter(today, 'day');
+        
+        week.push({ date, amount, isEmpty });
+      }
+      
+      weeks.push(week);
+    }
+    
+    return weeks.reverse(); // Reverse so oldest week is first
+  }, [commits, startOfProject, commitsByDay]);
 
-  const pastWeeksLabels = useMemo(() => {
-    const result: WeekLabel[] = [];
-    for (let i = 0; i <= 5; i++) {
-      const startOfWeek = moment().subtract(i, "weeks").startOf("week");
-      const index: WeekLabel = {
-        month: startOfWeek.format("MMM"),
-        start: startOfWeek.format("DD"),
-        end: startOfWeek.endOf("week").format("DD"),
+  // Generate week labels
+  const weekLabels = useMemo(() => {
+    return weeksData.map(week => {
+      const firstDay = week[0].date;
+      const lastDay = week[6].date;
+      
+      return {
+        month: firstDay.format('MMM'),
+        start: firstDay.format('DD'),
+        end: lastDay.format('DD'),
       };
-      result.push(index);
-    }
-    return result;
-  }, []);
+    });
+  }, [weeksData]);
 
-  // Method to determine fill color
-  const getFill = (weekDiff: number, weekday: number): string => {
-    if (weekDiff === 1 && weekday < currentWeekday) {
-      return "rgba(127,127,127,0)";
-    }
-
-    if (
-      startOfProjectIndStr &&
-      (startOfProjectIndStr[0] < weekDiff ||
-        (startOfProjectIndStr[0] === weekDiff &&
-          startOfProjectIndStr[1] > weekday))
-    ) {
-      return "rgba(127,127,127,0.1)";
-    }
-
-    const c = commitsGrouped[`${weekDiff}-${weekday}`];
-    if (c) {
-      return `hsla(207, 70%, 50%, ${Math.min(
-        Math.max((100 / 480) * c, 40),
-        100,
-      )}%)`;
-    } else {
-      return "rgba(127,127,127,0.2)";
-    }
+  // Calculate color intensity based on amount
+  const getColorIntensity = (amount: number): string => {
+    if (amount === 0) return "rgba(127,127,127,0.2)";
+    
+    // Normalize the intensity between 40% and 100%
+    const intensity = Math.min(Math.max((100 / 480) * amount, 40), 100);
+    return `hsla(207, 70%, 50%, ${intensity}%)`;
   };
-
-  // Generate week columns
-  const weekColumns = Array.from({ length: 6 }, (_, w) => w + 1).map((w) => (
-    <g key={`w-${w}`} transform={`translate(${(w - 1) * 50 + 35}, 0)`}>
-      {Array.from({ length: 7 }, (_, d) => d + 1).map((d) => (
-        <rect
-          key={`w-${w}d-${d}`}
-          transform={`translate(0, ${(d - 1) * 10})`}
-          fill={getFill(w, d)}
-          width="49"
-          height="9"
-        />
-      ))}
-    </g>
-  ));
 
   return (
     <svg viewBox="0 0 335 90" className="text-1">
-      {weekColumns}
-
+      {/* Day labels */}
       <g style={{ fontSize: "8px", fill: "currentColor" }}>
-        <text x="4" y="7">
-          Mon.
-        </text>
-        <text x="4" y="27">
-          Wed.
-        </text>
-        <text x="4" y="47">
-          Fri.
-        </text>
-        <text x="4" y="67">
-          Sun.
-        </text>
-
-        {pastWeeksLabels.map((l, i) => (
-          <g key={l.month + l.start}>
-            <text x={35 + i * 50} y="79">
-              {l.month}
-            </text>
-            <text x={35 + i * 50} y="89">
-              {l.start}-{l.end > l.start ? l.end : "..."}
-            </text>
+        <text x="4" y="7">Mon.</text>
+        <text x="4" y="27">Wed.</text>
+        <text x="4" y="47">Fri.</text>
+        <text x="4" y="67">Sun.</text>
+      </g>
+      
+      {/* Week columns */}
+      {weeksData.map((week, weekIndex) => (
+        <g key={`week-${weekIndex}`} transform={`translate(${weekIndex * 50 + 35}, 0)`}>
+          {week.map((day, dayIndex) => (
+            <rect
+              key={`day-${day.date.format('YYYY-MM-DD')}`}
+              transform={`translate(0, ${dayIndex * 10})`}
+              fill={day.isEmpty ? "rgba(127,127,127,0.1)" : getColorIntensity(day.amount)}
+              width="49"
+              height="9"
+            />
+          ))}
+        </g>
+      ))}
+      
+      {/* Month and date labels */}
+      <g style={{ fontSize: "8px", fill: "currentColor" }}>
+        {weekLabels.map((label, i) => (
+          <g key={`label-${i}`}>
+            <text x={35 + i * 50} y="79">{label.month}</text>
+            <text x={35 + i * 50} y="89">{label.start}-{label.end}</text>
           </g>
         ))}
       </g>
