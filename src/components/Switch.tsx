@@ -7,9 +7,9 @@ interface SwitchProps {
   className?: string;
 }
 
-const Switch: React.FC<SwitchProps> = ({ 
-  options, 
-  value, 
+const Switch: React.FC<SwitchProps> = ({
+  options,
+  value,
   onChange,
   className = ""
 }) => {
@@ -19,17 +19,15 @@ const Switch: React.FC<SwitchProps> = ({
         <button
           key={option}
           type="button"
-          className={`px-3 py-1 text-xs font-medium ${
-            value === option
+          className={`px-3 py-1 text-xs font-medium ${value === option
               ? "bg-blue-500 text-white"
               : "bg-white text-gray-700 hover:bg-gray-50"
-          } ${
-            options.indexOf(option) === 0
+            } ${options.indexOf(option) === 0
               ? "rounded-l-md"
               : options.indexOf(option) === options.length - 1
-              ? "rounded-r-md"
-              : ""
-          }`}
+                ? "rounded-r-md"
+                : ""
+            }`}
           onClick={() => onChange(option)}
         >
           {option}
