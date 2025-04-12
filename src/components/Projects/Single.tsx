@@ -6,6 +6,7 @@ import PomodoroTimer from "../PomodoroTimer";
 import Icon from "../Icon";
 import CommitHistoryGraph from "./CommitHistoryGraph";
 import TimeInput from "../TimeInput";
+import ManualTimeForm from "./ManualTimeForm";
 
 const Single: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -15,8 +16,6 @@ const Single: React.FC = () => {
   const [editingProjectName, setEditingProjectName] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [invalidProjectName, setInvalidProjectName] = useState(0);
-  const [showInsertTimeForm, setShowInsertTimeForm] = useState(0);
-  const [insertedTime, setInsertedTime] = useState<number | string>(0);
   const [showEditProjectSettings, setShowEditProjectSettings] = useState(0);
   const [projectTimeBudget, setProjectTimeBudget] = useState<number | string>(
     "",
@@ -79,12 +78,6 @@ const Single: React.FC = () => {
     }
   };
 
-  const handleCommitTimeManually = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleCommitTime({ amount: insertedTime });
-    setInsertedTime("");
-    setShowInsertTimeForm(0);
-  };
 
   const handleEditProjectSettings = (e: React.FormEvent) => {
     e.preventDefault();
@@ -190,37 +183,7 @@ const Single: React.FC = () => {
         </Link>
       )}
 
-      <button
-        className={`block mt-2 btn btn-default ${
-          showInsertTimeForm ? "shadow-md" : ""
-        }`}
-        onClick={() => setShowInsertTimeForm(1)}
-      >
-        <Icon name="plus-circle" />
-        {" Insert time manually"}
-      </button>
-
-      {showInsertTimeForm ? (
-        <form
-          className="m:flex items-end p-2 bg-1 shadow-md my-2 rounded-lg"
-          onSubmit={handleCommitTimeManually}
-        >
-          <TimeInput
-            value={insertedTime}
-            onChange={(value) => setInsertedTime(value)}
-          />
-          <button type="submit" className="mt-2 btn btn-primary">
-            Insert
-          </button>
-          <button
-            type="button"
-            className="mt-2 btn btn-default ml-1"
-            onClick={() => setShowInsertTimeForm(0)}
-          >
-            Cancel
-          </button>
-        </form>
-      ) : null}
+      <ManualTimeForm onCommitTime={handleCommitTime} />
 
       <button
         className={`block mt-2 btn btn-default ${
