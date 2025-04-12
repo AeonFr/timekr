@@ -1,15 +1,24 @@
 import React from "react";
 import { useParams } from "react-router";
+import Layout from "../components/Layout";
 import Single from "../components/Projects/Single";
 
 const ProjectSingle: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
 
   if (!slug) {
-    return <div>Project not found</div>;
+    return (
+      <Layout>
+        <div>Project not found</div>
+      </Layout>
+    );
   }
 
-  return <Single />;
+  return (
+    <Layout>
+      <Single />
+    </Layout>
+  );
 };
 
 export default ProjectSingle;
