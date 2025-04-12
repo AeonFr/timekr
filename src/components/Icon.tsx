@@ -1,5 +1,6 @@
 import React from "react";
 import { icons } from "feather-icons";
+import "./Icon.css";
 
 interface IconProps {
   name?: string;

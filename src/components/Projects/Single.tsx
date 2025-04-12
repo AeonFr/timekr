@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router";
 import useStore from "../../store";
 
 import PomodoroTimer from "../PomodoroTimer";
@@ -9,6 +9,7 @@ import TimeInput from "../TimeInput";
 
 const Single: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  console.log(slug);
   const navigate = useNavigate();
 
   const [editingProjectName, setEditingProjectName] = useState(false);
@@ -196,7 +197,7 @@ const Single: React.FC = () => {
         onClick={() => setShowInsertTimeForm(1)}
       >
         <Icon name="plus-circle" />
-        Insert time manually
+        {" Insert time manually"}
       </button>
 
       {showInsertTimeForm ? (
@@ -228,7 +229,7 @@ const Single: React.FC = () => {
         onClick={() => setShowEditProjectSettings(1)}
       >
         <Icon name="clock" />
-        Define time budget
+        {" Define time budget"}
       </button>
 
       {showEditProjectSettings ? (
@@ -258,7 +259,7 @@ const Single: React.FC = () => {
         onClick={handleDeleteProject}
       >
         <Icon name="trash" />
-        Delete project
+        {" Delete project"}
       </button>
     </main>
   );
