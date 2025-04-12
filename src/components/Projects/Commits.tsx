@@ -70,16 +70,10 @@ const Commits: React.FC = () => {
     if (editCommit && slug) {
       // If date was changed, update the commited_at timestamp
       if (editCommit.editDate) {
-        const originalTime = moment(editCommit.commited_at);
-        const newDate = moment(editCommit.editDate);
-
-        // Keep the original time but use the new date
-        newDate.hours(originalTime.hours());
-        newDate.minutes(originalTime.minutes());
-        newDate.seconds(originalTime.seconds());
-
+        const newDateTime = moment(editCommit.editDate);
+        
         // Convert to timestamp
-        editCommit.new_commited_at = +newDate;
+        editCommit.new_commited_at = +newDateTime;
       }
 
       // Create a clean commit object without the editDate property
@@ -138,7 +132,7 @@ const Commits: React.FC = () => {
                         setEditCommit({
                           ...commit,
                           editDate: moment(commit.commited_at).format(
-                            "YYYY-MM-DD",
+                            "YYYY-MM-DDTHH:mm",
                           ),
                         })
                       }
@@ -187,9 +181,9 @@ const Commits: React.FC = () => {
                           </div>
 
                           <div className="mb-2">
-                            <label className="block text-sm mb-1">Date:</label>
+                            <label className="block text-sm mb-1">Date and Time:</label>
                             <input
-                              type="date"
+                              type="datetime-local"
                               className="input"
                               value={editCommit.editDate}
                               onChange={(e) =>

@@ -10,7 +10,7 @@ const ManualTimeForm: React.FC<ManualTimeFormProps> = ({ onCommitTime }) => {
   const [showInsertTimeForm, setShowInsertTimeForm] = useState(0);
   const [insertedTime, setInsertedTime] = useState<number | string>(0);
   const [selectedDate, setSelectedDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split(".")[0]
   );
 
   const handleCommitTimeManually = (e: React.FormEvent) => {
@@ -49,9 +49,9 @@ const ManualTimeForm: React.FC<ManualTimeFormProps> = ({ onCommitTime }) => {
           </div>
           
           <div className="mb-2">
-            <label className="block text-sm mb-1">Date:</label>
+            <label className="block text-sm mb-1">Date and Time:</label>
             <input
-              type="date"
+              type="datetime-local"
               className="input"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
