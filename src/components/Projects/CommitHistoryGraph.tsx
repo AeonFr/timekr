@@ -95,7 +95,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
 
   // Calculate color intensity based on amount
   const getColorIntensity = (amount: number): string => {
-    if (amount === 0) return "rgba(127,127,127,0.2)";
+    if (amount === 0) return "rgba(127,127,127,0.1)";
 
     // Normalize the intensity between 40% and 100%
     const intensity = Math.min(Math.max((100 / 480) * amount, 40), 100);
@@ -106,10 +106,9 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     <svg viewBox="0 0 335 90" className="text-1">
       {/* Day labels */}
       <g style={{ fontSize: "8px", fill: "currentColor" }}>
-        <text x="4" y="7">Sun.</text>
-        <text x="4" y="27">Tue.</text>
-        <text x="4" y="47">Thu.</text>
-        <text x="4" y="67">Sat.</text>
+        <text x="4" y="17">Mon</text>
+        <text x="4" y="37">Wed</text>
+        <text x="4" y="57">Fri</text>
       </g>
 
       {/* Week columns */}
@@ -119,7 +118,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
             <rect
               key={`day-${day.date.format('YYYY-MM-DD')}`}
               transform={`translate(0, ${dayIndex * 10})`}
-              fill={day.isEmpty ? "rgba(127,127,127,0.1)" : getColorIntensity(day.amount)}
+              fill={day.isEmpty ? "rgba(127,127,127,0.06)" : getColorIntensity(day.amount)}
               width="49"
               height="9"
               aria-label={`Day ${day.date.format('YYYY-MM-DD')}`}

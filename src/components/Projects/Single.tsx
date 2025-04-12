@@ -10,7 +10,6 @@ import ManualTimeForm from "./ManualTimeForm";
 
 const Single: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  console.log(slug);
   const navigate = useNavigate();
 
   const [editingProjectName, setEditingProjectName] = useState(false);
@@ -72,12 +71,12 @@ const Single: React.FC = () => {
     setEditingProjectName(false);
   };
 
-  const handleCommitTime = ({ 
-    amount, 
-    date 
-  }: { 
-    amount: number | string; 
-    date?: Date 
+  const handleCommitTime = ({
+    amount,
+    date
+  }: {
+    amount: number | string;
+    date?: Date
   }) => {
     if (slug) {
       commitTime(slug, amount, date);
@@ -174,7 +173,6 @@ const Single: React.FC = () => {
 
       <CommitHistoryGraph
         commits={project.commits}
-        startOfProject={project.created_at}
       />
 
       <hr className="mt-6" />
@@ -192,9 +190,8 @@ const Single: React.FC = () => {
       <ManualTimeForm onCommitTime={handleCommitTime} />
 
       <button
-        className={`block mt-2 btn btn-default ${
-          showEditProjectSettings ? "shadow-md" : ""
-        }`}
+        className={`block mt-2 btn btn-default ${showEditProjectSettings ? "shadow-md" : ""
+          }`}
         onClick={() => setShowEditProjectSettings(1)}
       >
         <Icon name="clock" />
