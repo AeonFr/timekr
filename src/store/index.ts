@@ -113,7 +113,7 @@ const useStore = create<StoreState>((set, get) => ({
     set({ projects: newProjects });
   },
 
-  commitTime: (project_id, amount) => {
+  commitTime: (project_id, amount, date?: Date) => {
     const { projects } = get();
 
     if (!projects[project_id]) return;
@@ -121,7 +121,7 @@ const useStore = create<StoreState>((set, get) => ({
     const project = projects[project_id];
     const newCommit = {
       amount,
-      commited_at: +new Date(),
+      commited_at: date ? +date : +new Date(),
     };
 
     const updatedCommits = sortBy(
