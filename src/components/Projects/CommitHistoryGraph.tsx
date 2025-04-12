@@ -54,12 +54,12 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     for (let weekIndex = 0; weekIndex < 6; weekIndex++) {
       const week: DayData[] = [];
 
-      // For each day of the week (Monday = 1, Sunday = 7)
-      for (let dayIndex = 1; dayIndex <= 7; dayIndex++) {
+      // For each day of the week (Sunday = 0, Saturday = 6)
+      for (let dayIndex = 0; dayIndex <= 6; dayIndex++) {
         // Calculate the date for this cell
         const date = moment(today)
           .subtract(weekIndex, 'weeks')
-          .day(dayIndex === 7 ? 0 : dayIndex); // Convert to JS day format (0 = Sunday)
+          .day(dayIndex);
 
         const dateKey = date.format('YYYY-MM-DD');
         const amount = commitsByDay[dateKey] || 0;
@@ -106,10 +106,10 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     <svg viewBox="0 0 335 90" className="text-1">
       {/* Day labels */}
       <g style={{ fontSize: "8px", fill: "currentColor" }}>
-        <text x="4" y="7">Mon.</text>
-        <text x="4" y="27">Wed.</text>
-        <text x="4" y="47">Fri.</text>
-        <text x="4" y="67">Sun.</text>
+        <text x="4" y="7">Sun.</text>
+        <text x="4" y="27">Tue.</text>
+        <text x="4" y="47">Thu.</text>
+        <text x="4" y="67">Sat.</text>
       </g>
 
       {/* Week columns */}
