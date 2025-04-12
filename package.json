@@ -9,25 +9,25 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "precommit": "npm run lint"
+    "lint": "eslint .",
+    "precommit": "npm run lint",
+    "react": "19.x.x",
+    "react-dom": "19.x.x",
+    "react-router": "7.x.x"
   },
   "dependencies": {
-    "cross-env": "^5.2.0",
     "feather-icons": "^4.7.3",
     "file-saver": "^2.0.0-rc.3",
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.11",
-    "moment": "^2.22.2",
-    "nuxt": "^2.0.0"
+    "moment": "^2.22.2"
   },
   "devDependencies": {
-    "nodemon": "^1.11.0",
-    "babel-eslint": "^8.2.1",
-    "eslint": "^5.0.1",
-    "eslint-loader": "^2.0.0",
-    "eslint-plugin-vue": "^4.0.0",
+    "@eslint/js": "^9.24.0",
     "autoprefixer": "^8.6.4",
-    "tailwindcss": "~0.6.6"
+    "eslint": "^9.24.0",
+    "tailwindcss": "~0.6.6",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.29.1"
   }
 }
