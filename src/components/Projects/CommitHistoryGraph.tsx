@@ -30,20 +30,22 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
       return moment();
     }
 
-    const sortedCommits = [...commits].sort((a, b) => a.commited_at - b.commited_at);
+    const sortedCommits = [...commits].sort(
+      (a, b) => a.commited_at - b.commited_at,
+    );
     return moment(sortedCommits[0].commited_at);
   }, [commits]);
 
   // Group commits by day
   const commitsByDay = useMemo(() => {
     const grouped = groupBy(commits, (commit) =>
-      moment(commit.commited_at).format('YYYY-MM-DD')
+      moment(commit.commited_at).format("YYYY-MM-DD"),
     );
 
     // Sum the amounts for each day
     const result: Record<string, number> = {};
     Object.entries(grouped).forEach(([day, dayCommits]) => {
-      result[day] = sumBy(dayCommits, commit => Number(commit.amount));
+      result[day] = sumBy(dayCommits, (commit) => Number(commit.amount));
     });
 
     return result;
@@ -61,16 +63,14 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
       // For each day of the week (Sunday = 0, Saturday = 6)
       for (let dayIndex = 0; dayIndex <= 6; dayIndex++) {
         // Calculate the date for this cell
-        const date = moment(today)
-          .subtract(weekIndex, 'weeks')
-          .day(dayIndex);
+        const date = moment(today).subtract(weekIndex, "weeks").day(dayIndex);
 
-        const dateKey = date.format('YYYY-MM-DD');
+        const dateKey = date.format("YYYY-MM-DD");
         const amount = commitsByDay[dateKey] || 0;
 
         // Check if this date is before the project started
-        const isEmpty = date.isBefore(startOfProject, 'day') ||
-          date.isAfter(today, 'day');
+        const isEmpty =
+          date.isBefore(startOfProject, "day") || date.isAfter(today, "day");
 
         week.push({ date, amount, isEmpty });
       }
@@ -83,16 +83,17 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
 
   // Generate week labels
   const weekLabels = useMemo(() => {
-    return weeksData.map(week => {
+    return weeksData.map((week) => {
       const firstDay = week[0].date;
       const lastDay = week[6].date;
-      const firstMonth = firstDay.format('MMM');
-      const lastMonth = lastDay.format('MMM');
+      const firstMonth = firstDay.format("MMM");
+      const lastMonth = lastDay.format("MMM");
 
       return {
-        month: firstMonth === lastMonth ? firstMonth : `${firstMonth}-${lastMonth}`,
-        start: firstDay.format('DD'),
-        end: lastDay.format('DD'),
+        month:
+          firstMonth === lastMonth ? firstMonth : `${firstMonth}-${lastMonth}`,
+        start: firstDay.format("DD"),
+        end: lastDay.format("DD"),
       };
     });
   }, [weeksData]);
@@ -112,8 +113,8 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     const dailyTotals: number[] = [];
 
     // Flatten the weeks data and calculate daily totals
-    weeksData.forEach(week => {
-      week.forEach(day => {
+    weeksData.forEach((week) => {
+      week.forEach((day) => {
         dailyTotals.push(day.amount);
       });
     });
@@ -122,7 +123,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     const cumulativeTotals: number[] = [];
     let runningTotal = 0;
 
-    dailyTotals.forEach(amount => {
+    dailyTotals.forEach((amount) => {
       runningTotal += amount;
       cumulativeTotals.push(runningTotal);
     });
@@ -154,67 +155,97 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
           className="mb-2"
         />
       </div>
-      <svg viewBox="0 0 375 90" className="text-1">
-      {/* Day labels */}
-      <g style={{ fontSize: "8px", fill: "currentColor" }}>
-        <text x="4" y="17">Mon</text>
-        <text x="4" y="37">Wed</text>
-        <text x="4" y="57">Fri</text>
-      </g>
+      <svg
+        viewBox={viewType === "Per day" ? "0 0 335 90" : "30 0 345 90"}
+        className="text-1"
+      >
+        {/* Day labels */}
+        <g style={{ fontSize: "8px", fill: "currentColor" }}>
+          <text x="4" y="17">
+            Mon
+          </text>
+          <text x="4" y="37">
+            Wed
+          </text>
+          <text x="4" y="57">
+            Fri
+          </text>
+        </g>
 
-      {/* Week columns */}
-      <g style={{ opacity: viewType === "Per day" ? 1 : 0.3, transition: "opacity 0.3s ease-in-out" }}>
-      {weeksData.map((week, weekIndex) => (
-        <g key={`week-${weekIndex}`} transform={`translate(${weekIndex * 50 + 35}, 0)`}>
-          {week.map((day, dayIndex) => (
-            <rect
-              key={`day-${day.date.format('YYYY-MM-DD')}`}
-              transform={`translate(0, ${dayIndex * 10})`}
-              fill={day.isEmpty ? "rgba(127,127,127,0.06)" : getColorIntensity(day.amount)}
-              width="49"
-              height="9"
-              aria-label={`Day ${day.date.format('YYYY-MM-DD')}`}
-            />
+        {/* Week columns */}
+        <g
+          style={{
+            opacity: viewType === "Per day" ? 1 : 0,
+            transition: "opacity 0.3s ease-in-out",
+          }}
+        >
+          {weeksData.map((week, weekIndex) => (
+            <g
+              key={`week-${weekIndex}`}
+              transform={`translate(${weekIndex * 50 + 35}, 0)`}
+            >
+              {week.map((day, dayIndex) => (
+                <rect
+                  key={`day-${day.date.format("YYYY-MM-DD")}`}
+                  transform={`translate(0, ${dayIndex * 10})`}
+                  fill={
+                    day.isEmpty
+                      ? "rgba(127,127,127,0.06)"
+                      : getColorIntensity(day.amount)
+                  }
+                  width="49"
+                  height="9"
+                  aria-label={`Day ${day.date.format("YYYY-MM-DD")}`}
+                />
+              ))}
+            </g>
           ))}
         </g>
-      ))}
-      </g>
 
-      {/* Line graph for cumulative time */}
-      {cumulativeTimeData.points.length > 1 && (
-        <g style={{ opacity: viewType === "Line graph" ? 1 : 0.1, transition: "opacity 0.3s ease-in-out" }}>
-          {/* Line path */}
-          <path
-            d={`M${cumulativeTimeData.points.map(point => `${point[0]},${point[1]}`).join(' L')}`}
-            fill="none"
-            stroke="hsla(207, 70%, 50%, 100%)"
-            strokeWidth="1.5"
-          />
-          {/* Y-axis labels (right side) */}
-          <g style={{ fontSize: "8px", fill: "hsla(207, 70%, 50%, 100%)" }}>
-            <text x="336" y="14" textAnchor="start">
-              {Math.round(cumulativeTimeData.maxTotal)}min
-            </text>
-            <text x="336" y="44" textAnchor="start">
-              {Math.round(cumulativeTimeData.maxTotal / 2)}min
-            </text>
-            <text x="336" y="74" textAnchor="start">
-              0 min
-            </text>
+        {/* Line graph for cumulative time */}
+        {cumulativeTimeData.points.length > 1 && (
+          <g
+            style={{
+              opacity: viewType === "Line graph" ? 1 : 0,
+              transition: "opacity 0.3s ease-in-out",
+            }}
+          >
+            {/* Line path */}
+            <path
+              d={`M${cumulativeTimeData.points.map((point) => `${point[0]},${point[1]}`).join(" L")}`}
+              fill="none"
+              stroke="hsla(207, 70%, 50%, 100%)"
+              strokeWidth="1.5"
+            />
+            {/* Y-axis labels (right side) */}
+            <g style={{ fontSize: "8px", fill: "hsla(207, 70%, 50%, 100%)" }}>
+              <text x="336" y="14" textAnchor="start">
+                {Math.round(cumulativeTimeData.maxTotal)}min
+              </text>
+              <text x="336" y="44" textAnchor="start">
+                {Math.round(cumulativeTimeData.maxTotal / 2)}min
+              </text>
+              <text x="336" y="74" textAnchor="start">
+                0 min
+              </text>
+            </g>
           </g>
+        )}
+
+        {/* Month and date labels */}
+        <g style={{ fontSize: "8px", fill: "currentColor" }}>
+          {weekLabels.map((label, i) => (
+            <g key={`label-${i}`}>
+              <text x={35 + i * 50} y="79">
+                {label.month}
+              </text>
+              <text x={35 + i * 50} y="89">
+                {label.start}-{label.end}
+              </text>
+            </g>
+          ))}
         </g>
-      )}
-
-      {/* Month and date labels */}
-      <g style={{ fontSize: "8px", fill: "currentColor" }}>
-        {weekLabels.map((label, i) => (
-          <g key={`label-${i}`}>
-            <text x={35 + i * 50} y="79">{label.month}</text>
-            <text x={35 + i * 50} y="89">{label.start}-{label.end}</text>
-          </g>
-        ))}
-      </g>
-    </svg>
+      </svg>
     </div>
   );
 };

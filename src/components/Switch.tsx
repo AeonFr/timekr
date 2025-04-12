@@ -11,10 +11,10 @@ const Switch: React.FC<SwitchProps> = ({
   options,
   value,
   onChange,
-  className = ""
+  className = "",
 }) => {
   return (
-    <div className={`inline-flex shadow-md ${className}`}>
+    <div className={`inline-flex ${className}`}>
       {options.map((option) => (
         <button
           key={option}
