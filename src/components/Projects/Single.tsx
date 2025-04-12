@@ -11,14 +11,6 @@ interface Commit {
   amount: number | string;
 }
 
-type Project = {
-  name: string;
-  time: number;
-  commits: Commit[];
-  created_at: number;
-  time_budget?: number | string;
-}
-
 const Single: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();

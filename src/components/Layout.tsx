@@ -18,19 +18,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     localStorage.getItem('cookie_consent') || false
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const location = useLocation();
+  const { pathname } = useLocation();
   
   const projects = useStore(state => state.projects);
   const importProjects = useStore(state => state.importProjects);
 
-  // Apply dark interface effect
+  // Apply dark interface effect and reset menu on navigation
   useEffect(() => {
     if (darkInterface === '1') {
       document.body.classList.add('dark-interface');
     } else {
       document.body.classList.remove('dark-interface');
     }
-  }, [darkInterface]);
+  }, [darkInterface, pathname]);
 
   const handleDarkInterfaceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDarkInterface(e.target.value);
