@@ -103,31 +103,31 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     const intensity = Math.min(Math.max((100 / 480) * amount, 40), 100);
     return `hsla(207, 70%, 50%, ${intensity}%)`;
   };
-  
+
   // Calculate cumulative time data for the line graph
   const cumulativeTimeData = useMemo(() => {
     // Create an array of daily totals for each week
     const dailyTotals: number[] = [];
-    
+
     // Flatten the weeks data and calculate daily totals
     weeksData.forEach(week => {
       week.forEach(day => {
         dailyTotals.push(day.amount);
       });
     });
-    
+
     // Calculate cumulative totals
     const cumulativeTotals: number[] = [];
     let runningTotal = 0;
-    
+
     dailyTotals.forEach(amount => {
       runningTotal += amount;
       cumulativeTotals.push(runningTotal);
     });
-    
+
     // Get the maximum value for scaling
     const maxTotal = Math.max(...cumulativeTotals, totalTime);
-    
+
     // Calculate points for the line graph (x, y coordinates)
     const points: [number, number][] = cumulativeTotals.map((total, index) => {
       const x = 35 + Math.floor(index / 7) * 50 + (index % 7) * 7;
@@ -135,7 +135,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
       const y = maxTotal > 0 ? 70 - (total / maxTotal) * 60 : 70;
       return [x, y];
     });
-    
+
     return {
       points,
       maxTotal,
@@ -143,7 +143,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
   }, [weeksData, totalTime]);
 
   return (
-    <svg viewBox="0 0 335 90" className="text-1">
+    <svg viewBox="0 0 375 90" className="text-1">
       {/* Day labels */}
       <g style={{ fontSize: "8px", fill: "currentColor" }}>
         <text x="4" y="17">Mon</text>
@@ -166,7 +166,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
           ))}
         </g>
       ))}
-      
+
       {/* Line graph for cumulative time */}
       {cumulativeTimeData.points.length > 1 && (
         <>
@@ -174,30 +174,18 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
           <path
             d={`M${cumulativeTimeData.points.map(point => `${point[0]},${point[1]}`).join(' L')}`}
             fill="none"
-            stroke="rgba(0, 0, 0, 0.8)"
+            stroke="hsla(207, 70%, 50%, 100%)"
             strokeWidth="1.5"
           />
-          
-          {/* Data points */}
-          {cumulativeTimeData.points.map((point, index) => (
-            <circle
-              key={`point-${index}`}
-              cx={point[0]}
-              cy={point[1]}
-              r="1.5"
-              fill="rgba(0, 0, 0, 0.8)"
-            />
-          ))}
-          
           {/* Y-axis labels (right side) */}
-          <g style={{ fontSize: "8px", fill: "rgba(0, 0, 0, 0.9)" }}>
-            <text x="330" y="10" textAnchor="end">
-              {Math.round(cumulativeTimeData.maxTotal)} min
+          <g style={{ fontSize: "8px", fill: "hsla(207, 70%, 50%, 100%)" }}>
+            <text x="336" y="14" textAnchor="start">
+              {Math.round(cumulativeTimeData.maxTotal)}min
             </text>
-            <text x="330" y="40" textAnchor="end">
-              {Math.round(cumulativeTimeData.maxTotal / 2)} min
+            <text x="336" y="44" textAnchor="start">
+              {Math.round(cumulativeTimeData.maxTotal / 2)}min
             </text>
-            <text x="330" y="70" textAnchor="end">
+            <text x="336" y="74" textAnchor="start">
               0 min
             </text>
           </g>
