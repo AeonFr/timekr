@@ -14,7 +14,9 @@ interface Commit {
 
 const Commits: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [editCommit, setEditCommit] = useState<Commit & { editDate?: string } | false>(false);
+  const [editCommit, setEditCommit] = useState<
+    (Commit & { editDate?: string }) | false
+  >(false);
 
   const projects = useStore((state) => state.projects);
   const editCommitAction = useStore((state) => state.editCommit);
@@ -70,22 +72,23 @@ const Commits: React.FC = () => {
       if (editCommit.editDate) {
         const originalTime = moment(editCommit.commited_at);
         const newDate = moment(editCommit.editDate);
-        
+
         // Keep the original time but use the new date
         newDate.hours(originalTime.hours());
         newDate.minutes(originalTime.minutes());
         newDate.seconds(originalTime.seconds());
-        
+
         // Convert to timestamp
-        editCommit.commited_at = +newDate;
+        editCommit.new_commited_at = +newDate;
       }
-      
+
       // Create a clean commit object without the editDate property
       const commitToSave = {
         commited_at: editCommit.commited_at,
-        amount: editCommit.amount
+        new_commited_at: editCommit.new_commited_at,
+        amount: editCommit.amount,
       };
-      
+
       editCommitAction(slug, commitToSave);
       setEditCommit(false);
     }
@@ -131,10 +134,14 @@ const Commits: React.FC = () => {
                   <li key={i} className="group p-2 bg-1">
                     <div
                       className="m:flex"
-                      onClick={() => setEditCommit({ 
-                        ...commit,
-                        editDate: moment(commit.commited_at).format('YYYY-MM-DD')
-                      })}
+                      onClick={() =>
+                        setEditCommit({
+                          ...commit,
+                          editDate: moment(commit.commited_at).format(
+                            "YYYY-MM-DD",
+                          ),
+                        })
+                      }
                     >
                       <div>
                         <span className="text-1">
@@ -168,7 +175,9 @@ const Commits: React.FC = () => {
                           }}
                         >
                           <div className="mb-2">
-                            <label className="block text-sm mb-1">Time amount:</label>
+                            <label className="block text-sm mb-1">
+                              Time amount:
+                            </label>
                             <TimeInput
                               value={editCommit.amount}
                               onChange={(value) =>
@@ -176,7 +185,7 @@ const Commits: React.FC = () => {
                               }
                             />
                           </div>
-                          
+
                           <div className="mb-2">
                             <label className="block text-sm mb-1">Date:</label>
                             <input
@@ -184,11 +193,14 @@ const Commits: React.FC = () => {
                               className="input"
                               value={editCommit.editDate}
                               onChange={(e) =>
-                                setEditCommit({ ...editCommit, editDate: e.target.value })
+                                setEditCommit({
+                                  ...editCommit,
+                                  editDate: e.target.value,
+                                })
                               }
                             />
                           </div>
-                          
+
                           <div className="flex">
                             <button type="submit" className="btn btn-primary">
                               Edit

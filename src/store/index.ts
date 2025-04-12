@@ -30,7 +30,10 @@ interface StoreState {
     deadline?: number,
   ) => void;
   importProjects: (projects: Record<string, Project>) => void;
-  editCommit: (project_slug: string, commitData: Commit) => void;
+  editCommit: (
+    project_slug: string,
+    commitData: Commit & { new_commited_at?: number },
+  ) => void;
 }
 
 // Helper functions for state persistence
@@ -197,9 +200,9 @@ const useStore = create<StoreState>((set, get) => ({
     commits[commitIndex] = {
       ...commits[commitIndex],
       amount: Number(commitData.amount),
-      commited_at: commitData.commited_at
-        ? Number(commitData.commited_at)
-        : commits[commitIndex].commited_at,
+      commited_at: commitData.new_commited_at
+        ? Number(commitData.new_commited_at)
+        : commits[commitIndex].new_commited_at,
     };
 
     // Recalculate total time
