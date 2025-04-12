@@ -3,10 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 import useStore from '../../store';
 import Icon from '../Icon';
 
-interface Project {
-  name: string;
-}
-
 const List: React.FC = () => {
   const [newProjectName, setNewProjectName] = useState('');
   const [invalidProjectName, setInvalidProjectName] = useState(0);
@@ -15,7 +11,7 @@ const List: React.FC = () => {
   const projects = useStore(state => state.projects);
   const addProject = useStore(state => state.addProject);
 
-  const handleAddProject = (e: React.FormEvent) => {
+  const handleSubmitProject = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!newProjectName) {
@@ -54,7 +50,7 @@ const List: React.FC = () => {
 
       <form
         className="w-full max-w-sm"
-        onSubmit={addProject}
+        onSubmit={handleSubmitProject}
       >
         <div className="flex items-center py-2">
           <input

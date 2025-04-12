@@ -48,8 +48,8 @@ const retrieveState = (): Record<string, Project> => {
     try {
       const parsedProjects = JSON.parse(localStorageProjects || cookieProjects || '{}');
       if (parsedProjects) return parsedProjects;
-    } catch (e) {
-      console.error('JSON parsing failed');
+    } catch (error) {
+      console.error('JSON parsing failed', error);
     }
   }
   return {};

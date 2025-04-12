@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 
 import PomodoroTimer from '../PomodoroTimer';
 import Icon from '../Icon';
@@ -18,12 +17,6 @@ interface Project {
   commits: Commit[];
   created_at: number;
   time_budget?: number | string;
-}
-
-interface RootState {
-  projects: {
-    [key: string]: Project;
-  };
 }
 
 const Single: React.FC = () => {

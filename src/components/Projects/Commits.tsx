@@ -12,11 +12,6 @@ interface Commit {
   amount: number | string;
 }
 
-interface Project {
-  name: string;
-  commits: Commit[];
-}
-
 const Commits: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [editCommit, setEditCommit] = useState<Commit | false>(false);

@@ -18,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     localStorage.getItem('cookie_consent') || false
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const location = useLocation();
+  const { pathname } = useLocation();
   
   const projects = useStore(state => state.projects);
   const importProjects = useStore(state => state.importProjects);

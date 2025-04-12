@@ -73,7 +73,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
 
   // Audio beep function
   const beep = () => {
-    const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const context = new (window.AudioContext || (window as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     const oscillator = context.createOscillator();
     oscillator.type = "square";
     oscillator.frequency.value = 830.6;
