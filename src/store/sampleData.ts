@@ -1,4 +1,4 @@
-import { sortBy, random } from "lodash";
+import { sortBy } from "lodash";
 import moment from "moment";
 
 // Define interfaces for our state
@@ -20,46 +20,68 @@ interface Project {
 // Generate sample project data for demonstration
 export const generateSampleProject = (): Record<string, Project> => {
   // Get the start of the current week (Monday)
-  const startOfWeek = moment().startOf('week');
+  const startOfWeek = moment().startOf("week");
   const commits: Commit[] = [];
-  
-  // Generate random commits for the past 14 days
-  for (let i = 0; i < 14; i++) {
-    const day = moment(startOfWeek).subtract(i, 'days');
-    
-    // Add 0-3 commits per day with random times
-    const commitsPerDay = random(0, 3);
-    for (let j = 0; j < commitsPerDay; j++) {
-      // Random time between 9am and 6pm
-      const hour = random(9, 18);
-      const minute = random(0, 59);
-      const commitTime = moment(day).hour(hour).minute(minute);
-      
-      // Random amount between 15 and 120 minutes
-      const amount = random(15, 120);
-      
-      commits.push({
-        commited_at: +commitTime,
-        amount: amount
-      });
-    }
+
+  const sampleData = [
+    {
+      dayDelta: -1,
+      hour: 9,
+      minute: 20,
+      amount: 20,
+    },
+    {
+      dayDelta: -1,
+      hour: 10,
+      minute: 24,
+      amount: 40,
+    },
+    {
+      dayDelta: -1,
+      hour: 14,
+      minute: 36,
+      amount: 36,
+    },
+    {
+      dayDelta: -2,
+      hour: 16,
+      minute: 30,
+      amount: 120,
+    },
+    // ...
+  ];
+
+  for (const commitSample of sampleData) {
+    const day = moment(startOfWeek).subtract(commitSample.dayDelta, "days");
+
+    const commitTime = moment(day)
+      .hour(commitSample.hour)
+      .minute(commitSample.minute);
+
+    commits.push({
+      commited_at: +commitTime,
+      amount: commitSample.amount,
+    });
   }
-  
+
   // Sort commits by date (newest first)
-  const sortedCommits = sortBy(commits, ['commited_at']).reverse();
-  
+  const sortedCommits = sortBy(commits, ["commited_at"]).reverse();
+
   // Calculate total time
-  const totalTime = commits.reduce((sum, commit) => sum + Number(commit.amount), 0);
-  
+  const totalTime = commits.reduce(
+    (sum, commit) => sum + Number(commit.amount),
+    0,
+  );
+
   return {
     "Sample Project": {
       name: "Sample Project",
       time: totalTime,
       commits: sortedCommits,
-      created_at: +moment().subtract(14, 'days'),
+      created_at: +moment().subtract(14, "days"),
       updated_at: +new Date(),
       time_budget: 2000,
-      deadline: +moment().add(14, 'days')
-    }
+      deadline: +moment().add(14, "days"),
+    },
   };
 };
