@@ -24,7 +24,11 @@ interface StoreState {
   addProject: (name: string) => void;
   updateProject: (id: string, name: string) => void;
   deleteProject: (name: string) => void;
-  commitTime: (project_id: string, amount: number | string) => void;
+  commitTime: (
+    project_id: string,
+    amount: number | string,
+    date?: Date,
+  ) => void;
   editProjectSettings: (
     project_id: string,
     timeBudget?: number | string,
@@ -44,7 +48,6 @@ const saveState = (projects: Record<string, Project>): void => {
   Cookie.set("projects", stringifiedState, { expires: 365 });
 };
 
-
 const retrieveState = (): Record<string, Project> => {
   const localStorageProjects = localStorage.getItem("projects");
   const cookieProjects = Cookie.get("projects");
@@ -61,7 +64,7 @@ const retrieveState = (): Record<string, Project> => {
       console.error("JSON parsing failed", error);
     }
   }
-  
+
   // If no projects exist, return a sample project
   return generateSampleProject();
 };
