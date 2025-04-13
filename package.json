@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp -r static/ dist/",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "precommit": "npm run lint",

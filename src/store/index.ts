@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { sortBy } from "lodash";
 import Cookie from "js-cookie";
+import { generateSampleProject } from "./sampleData";
 
 // Define interfaces for our state
 interface Commit {
@@ -43,6 +44,7 @@ const saveState = (projects: Record<string, Project>): void => {
   Cookie.set("projects", stringifiedState, { expires: 365 });
 };
 
+
 const retrieveState = (): Record<string, Project> => {
   const localStorageProjects = localStorage.getItem("projects");
   const cookieProjects = Cookie.get("projects");
@@ -52,12 +54,16 @@ const retrieveState = (): Record<string, Project> => {
       const parsedProjects = JSON.parse(
         localStorageProjects || cookieProjects || "{}",
       );
-      if (parsedProjects) return parsedProjects;
+      if (parsedProjects && Object.keys(parsedProjects).length > 0) {
+        return parsedProjects;
+      }
     } catch (error) {
       console.error("JSON parsing failed", error);
     }
   }
-  return {};
+  
+  // If no projects exist, return a sample project
+  return generateSampleProject();
 };
 
 // Create the store

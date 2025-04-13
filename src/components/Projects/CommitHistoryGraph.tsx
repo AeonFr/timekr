@@ -98,12 +98,26 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     });
   }, [weeksData]);
 
+  const [lowestAmount, highestAmount] = useMemo(() => {
+    const sorted = commits.sort((c1, c2) => {
+      if (c1.amount < c2.amount) {
+        return -1;
+      }
+      return 1;
+    });
+    return [sorted[0]?.amount || 0, sorted.at(-1)?.amount || 40];
+  }, [commits]);
+
   // Calculate color intensity based on amount
   const getColorIntensity = (amount: number): string => {
     if (amount === 0) return "rgba(127,127,127,0.1)";
+    // Calculate the intensity based on linear interpolation
+    let intensity =
+      40 + ((amount - lowestAmount) * 60) / (highestAmount - lowestAmount);
 
-    // Normalize the intensity between 40% and 100%
-    const intensity = Math.min(Math.max((100 / 480) * amount, 40), 100);
+    // Clamp intensity to be between 40 and 100
+    intensity = Math.min(100, Math.max(40, intensity));
+
     return `hsla(207, 70%, 50%, ${intensity}%)`;
   };
 
