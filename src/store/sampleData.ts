@@ -52,7 +52,7 @@ export const generateSampleProject = (): Record<string, Project> => {
   ];
 
   for (const commitSample of sampleData) {
-    const day = moment(startOfWeek).subtract(commitSample.dayDelta, "days");
+    const day = moment(startOfWeek).subtract(-commitSample.dayDelta, "days");
 
     const commitTime = moment(day)
       .hour(commitSample.hour)
