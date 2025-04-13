@@ -24,6 +24,20 @@ export const generateSampleProject = (): Record<string, Project> => {
   const commits: Commit[] = [];
 
   const sampleData = [
+    // Today
+    {
+      dayDelta: 0,
+      hour: 9,
+      minute: 15,
+      amount: 25,
+    },
+    {
+      dayDelta: 0,
+      hour: 11,
+      minute: 45,
+      amount: 60,
+    },
+    // Yesterday
     {
       dayDelta: -1,
       hour: 9,
@@ -42,13 +56,64 @@ export const generateSampleProject = (): Record<string, Project> => {
       minute: 36,
       amount: 36,
     },
+    // 2 days ago
     {
       dayDelta: -2,
       hour: 16,
       minute: 30,
       amount: 120,
     },
-    // ...
+    {
+      dayDelta: -2,
+      hour: 10,
+      minute: 0,
+      amount: 45,
+    },
+    // 3 days ago
+    {
+      dayDelta: -3,
+      hour: 13,
+      minute: 15,
+      amount: 90,
+    },
+    // 5 days ago
+    {
+      dayDelta: -5,
+      hour: 9,
+      minute: 30,
+      amount: 30,
+    },
+    {
+      dayDelta: -5,
+      hour: 15,
+      minute: 0,
+      amount: 75,
+    },
+    // Last week
+    {
+      dayDelta: -7,
+      hour: 10,
+      minute: 45,
+      amount: 50,
+    },
+    {
+      dayDelta: -8,
+      hour: 14,
+      minute: 20,
+      amount: 65,
+    },
+    {
+      dayDelta: -10,
+      hour: 11,
+      minute: 10,
+      amount: 40,
+    },
+    {
+      dayDelta: -12,
+      hour: 16,
+      minute: 5,
+      amount: 80,
+    }
   ];
 
   for (const commitSample of sampleData) {
