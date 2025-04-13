@@ -73,16 +73,15 @@ const Single: React.FC = () => {
 
   const handleCommitTime = ({
     amount,
-    date
+    date,
   }: {
     amount: number | string;
-    date?: Date
+    date?: Date;
   }) => {
     if (slug) {
       commitTime(slug, amount, date);
     }
   };
-
 
   const handleEditProjectSettings = (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +94,12 @@ const Single: React.FC = () => {
   };
 
   const handleDeleteProject = () => {
-    if (!slug || !window.confirm(`Are you sure you want to delete ${slug}?`)) {
+    if (
+      !slug ||
+      !window.confirm(
+        `Are you sure you want to delete ${project ? project.name : slug}?`,
+      )
+    ) {
       return false;
     }
 
@@ -171,10 +175,7 @@ const Single: React.FC = () => {
         )}
       </section>
 
-      <CommitHistoryGraph
-        commits={project.commits}
-        totalTime={project.time}
-      />
+      <CommitHistoryGraph commits={project.commits} totalTime={project.time} />
 
       <hr className="mt-6" />
 
@@ -191,8 +192,9 @@ const Single: React.FC = () => {
       <ManualTimeForm onCommitTime={handleCommitTime} />
 
       <button
-        className={`block mt-2 btn btn-default ${showEditProjectSettings ? "shadow-md" : ""
-          }`}
+        className={`block mt-2 btn btn-default ${
+          showEditProjectSettings ? "shadow-md" : ""
+        }`}
         onClick={() => setShowEditProjectSettings(1)}
       >
         <Icon name="clock" />

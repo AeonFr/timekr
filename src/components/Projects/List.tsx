@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useParams, useNavigate } from "react-router";
 import useStore from "../../store";
 import Icon from "../Icon";
 
@@ -7,6 +7,7 @@ const List: React.FC = () => {
   const [newProjectName, setNewProjectName] = useState("");
   const [invalidProjectName, setInvalidProjectName] = useState(0);
   const { slug } = useParams<{ slug?: string }>();
+  const navigate = useNavigate();
 
   const projects = useStore((state) => state.projects);
   const addProject = useStore((state) => state.addProject);
@@ -20,6 +21,7 @@ const List: React.FC = () => {
 
     addProject(newProjectName);
     setNewProjectName("");
+    navigate(`/project/${encodeURIComponent(newProjectName)}`);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
