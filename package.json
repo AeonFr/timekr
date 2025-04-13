@@ -12,7 +12,8 @@
     "precommit": "npm run lint",
     "format": "prettier -w src",
     "postinstall": "simple-git-hooks",
-    "test:browser": "vitest --workspace=vitest.workspace.ts"
+    "test:browser": "vitest watch --workspace=vitest.workspace.ts",
+    "test:browser:run": "vitest run --workspace=vitest.workspace.ts --browser.headless"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
