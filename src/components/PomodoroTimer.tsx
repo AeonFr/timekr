@@ -78,7 +78,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ projectSlug }) => {
 
   return (
     <section
-      className="my-3 shadow-md bg-1 rounded-lg"
+      className="my-3 border border-grey-light bg-1 rounded-lg"
       style={{
         transition: "height 0.15s ease",
         height:
