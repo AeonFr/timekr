@@ -10,7 +10,7 @@ interface PomodoroTimerProps {
 const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ projectSlug }) => {
   const { startTimer, stopTimer, resetTimer, getTimerState, setCustomTime } =
     useTimerStore();
-  const { time, timerStopped, partialTimeCommited } =
+  const { time, initialTime, timerStopped, partialTimeCommited } =
     getTimerState(projectSlug);
 
   // Format time with leading zeros
@@ -80,13 +80,15 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ projectSlug }) => {
     <section
       className="my-3 border border-grey-light bg-1 rounded-lg"
       style={{
-        transition: "height 0.15s ease",
+        transition: "max-height 0.15s ease",
         height:
-          partialTimeCommited || customTimeConfig !== null ? "auto" : "70px",
+          partialTimeCommited !== false || customTimeConfig !== null
+            ? "auto"
+            : "72px",
       }}
     >
       <div className="flex p-4">
-        <div className="m:inline-block mb-4 m:mb-0 px-4 text-3xl text-1 font-mono mr-auto">
+        <div className="mb-0 px-4 text-3xl text-1 font-mono mr-auto">
           {prettyTime}
 
           {timerStopped &&
@@ -116,19 +118,21 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ projectSlug }) => {
           {timerStopped ? " Start" : " Pause"}
         </button>
 
-        <button
-          type="button"
-          className="btn btn-danger align-top"
-          onClick={() => handleResetTimer()}
-        >
-          <Icon name="x-circle" className="w-5 h-5" />
-          {" Reset"}
-        </button>
+        {(!timerStopped || time !== initialTime) && (
+          <button
+            type="button"
+            className="btn btn-danger align-top"
+            onClick={() => handleResetTimer()}
+          >
+            <Icon name="x-circle" className="w-5 h-5" />
+            {" Reset"}
+          </button>
+        )}
       </div>
 
       {partialTimeCommited !== false && (
         <form
-          className="m:flex items-center p-4 show-ltr"
+          className="flex items-center p-4 show-ltr"
           onSubmit={commitPartialTime}
         >
           <div className="text-left px-4">
@@ -147,7 +151,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ projectSlug }) => {
 
       {customTimeConfig !== null && !partialTimeCommited && (
         <form
-          className="m:flex items-center p-4 show-ltr"
+          className="flex items-center p-4 show-ltr"
           onSubmit={(e) => {
             e.preventDefault();
             saveCustomTime();
