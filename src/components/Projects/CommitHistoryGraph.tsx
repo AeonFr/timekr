@@ -57,31 +57,18 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
 
   // Update visible weeks based on screen width using matchMedia
   useEffect(() => {
-    // Create media query for screens less than 840px
     const mediaQuery = window.matchMedia("(max-width: 840px)");
-    
-    // Handler function that updates visible weeks based on media query state
-    const handleMediaQueryChange = (e: MediaQueryListEvent | MediaQueryList) => {
+
+    const handleMediaQueryChange = (
+      e: MediaQueryListEvent | MediaQueryList,
+    ) => {
       setVisibleWeeks(e.matches ? 4 : 6);
     };
-    
-    // Initial check
-    handleMediaQueryChange(mediaQuery);
-    
-    // Modern event listener approach
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener("change", handleMediaQueryChange);
-      return () => {
-        mediaQuery.removeEventListener("change", handleMediaQueryChange);
-      };
-    } 
-    // Fallback for older browsers
-    else {
-      mediaQuery.addListener(handleMediaQueryChange);
-      return () => {
-        mediaQuery.removeListener(handleMediaQueryChange);
-      };
-    }
+
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
+    return () => {
+      mediaQuery.removeEventListener("change", handleMediaQueryChange);
+    };
   }, []);
 
   // Generate data for the last N weeks
