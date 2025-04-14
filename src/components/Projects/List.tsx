@@ -13,7 +13,7 @@ const List: React.FC = () => {
   const projects = useStore((state) => state.projects);
   const addProject = useStore((state) => state.addProject);
   const { getTimerState } = useTimerStore();
-  
+
   // Helper function to format time with leading zeros
   const twoDigits = (num: number): string => {
     return ("0" + num).slice(-2);
@@ -57,8 +57,9 @@ const List: React.FC = () => {
                   const { time, timerStopped } = getTimerState(projectSlug);
                   if (!timerStopped && time > 0) {
                     return (
-                      <span className="font-mono text-sm bg-gray-700 text-white px-2 py-1 rounded">
-                        {twoDigits(Math.floor(time / 60))}:{twoDigits(time % 60)}
+                      <span className="font-mono text-sm">
+                        {twoDigits(Math.floor(time / 60))}:
+                        {twoDigits(time % 60)}
                       </span>
                     );
                   }

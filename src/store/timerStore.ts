@@ -1,13 +1,16 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface TimerState {
-  timers: Record<string, {
-    time: number;
-    timerStopped: boolean;
-    lastUpdated: number;
-    intervalId?: number;
-  }>;
+  timers: Record<
+    string,
+    {
+      time: number;
+      timerStopped: boolean;
+      lastUpdated: number;
+      intervalId?: number;
+    }
+  >;
   startTimer: (projectSlug: string) => void;
   stopTimer: (projectSlug: string) => void;
   resetTimer: (projectSlug: string) => void;
@@ -16,40 +19,38 @@ interface TimerState {
     timerStopped: boolean;
     partialTimeCommited: number | false;
   };
-  updateDocumentTitle: (projectSlug: string) => void;
   cleanupTimers: () => void;
 }
-
-// Helper function to format time with leading zeros
-const twoDigits = (num: number): string => {
-  return ("0" + num).slice(-2);
-};
 
 export const useTimerStore = create<TimerState>()(
   persist(
     (set, get) => ({
       timers: {},
-      
+
       startTimer: (projectSlug: string) => {
         const timers = get().timers;
-        const currentTimer = timers[projectSlug] || { time: 1500, timerStopped: true, lastUpdated: Date.now() };
-        
+        const currentTimer = timers[projectSlug] || {
+          time: 1500,
+          timerStopped: true,
+          lastUpdated: Date.now(),
+        };
+
         // If timer is at 0, reset it
         if (currentTimer.time === 0) {
           currentTimer.time = 1500;
         }
-        
+
         // Clear any existing interval
         if (currentTimer.intervalId) {
           window.clearInterval(currentTimer.intervalId);
         }
-        
+
         // Create a new interval
         const intervalId = window.setInterval(() => {
           const store = get();
           const timers = store.timers;
           const timer = timers[projectSlug];
-          
+
           if (timer && !timer.timerStopped && timer.time > 0) {
             set({
               timers: {
@@ -58,18 +59,15 @@ export const useTimerStore = create<TimerState>()(
                   ...timer,
                   time: timer.time - 1,
                   lastUpdated: Date.now(),
-                }
-              }
+                },
+              },
             });
-            
-            // Update document title
-            store.updateDocumentTitle(projectSlug);
           } else if (timer && !timer.timerStopped && timer.time === 0) {
             // Timer reached zero, update document title
             document.title = "Timekr";
           }
         }, 1000);
-        
+
         set({
           timers: {
             ...timers,
@@ -78,24 +76,21 @@ export const useTimerStore = create<TimerState>()(
               timerStopped: false,
               lastUpdated: Date.now(),
               intervalId: intervalId,
-            }
-          }
+            },
+          },
         });
-        
-        // Update document title immediately
-        get().updateDocumentTitle(projectSlug);
       },
-      
+
       stopTimer: (projectSlug: string) => {
         const timers = get().timers;
         const currentTimer = timers[projectSlug];
-        
+
         if (currentTimer) {
           // Clear the interval
           if (currentTimer.intervalId) {
             window.clearInterval(currentTimer.intervalId);
           }
-          
+
           set({
             timers: {
               ...timers,
@@ -104,25 +99,25 @@ export const useTimerStore = create<TimerState>()(
                 timerStopped: true,
                 lastUpdated: Date.now(),
                 intervalId: undefined,
-              }
-            }
+              },
+            },
           });
-          
+
           // Reset document title
           document.title = "Timekr";
         }
       },
-      
+
       resetTimer: (projectSlug: string) => {
         const timers = get().timers;
         const currentTimer = timers[projectSlug];
-        
+
         if (currentTimer) {
           // Clear the interval
           if (currentTimer.intervalId) {
             window.clearInterval(currentTimer.intervalId);
           }
-          
+
           set({
             timers: {
               ...timers,
@@ -132,55 +127,49 @@ export const useTimerStore = create<TimerState>()(
                 timerStopped: true,
                 lastUpdated: Date.now(),
                 intervalId: undefined,
-              }
-            }
+              },
+            },
           });
-          
+
           // Reset document title
           document.title = "Timekr";
         }
       },
-      
-      updateDocumentTitle: (projectSlug: string) => {
-        const timers = get().timers;
-        const currentTimer = timers[projectSlug];
-        
-        if (currentTimer && !currentTimer.timerStopped && currentTimer.time > 0) {
-          document.title = `(${twoDigits(
-            Math.floor(currentTimer.time / 60),
-          )}:${twoDigits(currentTimer.time % 60)}) Timekr`;
-        }
-      },
-      
+
       getTimerState: (projectSlug: string) => {
         const timers = get().timers;
-        const currentTimer = timers[projectSlug] || { time: 1500, timerStopped: true, lastUpdated: Date.now() };
-        
+        const currentTimer = timers[projectSlug] || {
+          time: 1500,
+          timerStopped: true,
+          lastUpdated: Date.now(),
+        };
+
         // Calculate partial time committed (minutes spent)
-        const partialTimeCommited = currentTimer.timerStopped && currentTimer.time < 1500 
-          ? Math.max(1, Math.round((1500 - currentTimer.time) / 60))
-          : false;
-        
+        const partialTimeCommited =
+          currentTimer.timerStopped && currentTimer.time < 1500
+            ? Math.max(1, Math.round((1500 - currentTimer.time) / 60))
+            : false;
+
         return {
           time: currentTimer.time,
           timerStopped: currentTimer.timerStopped,
-          partialTimeCommited
+          partialTimeCommited,
         };
       },
-      
+
       cleanupTimers: () => {
         const timers = get().timers;
-        
+
         // Clear all intervals
-        Object.values(timers).forEach(timer => {
+        Object.values(timers).forEach((timer) => {
           if (timer.intervalId) {
             window.clearInterval(timer.intervalId);
           }
         });
-      }
+      },
     }),
     {
-      name: 'timekr-timer-storage',
+      name: "timekr-timer-storage",
       // Don't persist intervalId
       partialize: (state) => ({
         timers: Object.fromEntries(
@@ -189,18 +178,18 @@ export const useTimerStore = create<TimerState>()(
             {
               time: timer.time,
               timerStopped: timer.timerStopped,
-              lastUpdated: timer.lastUpdated
-            }
-          ])
-        )
+              lastUpdated: timer.lastUpdated,
+            },
+          ]),
+        ),
       }),
-    }
-  )
+    },
+  ),
 );
 
 // Setup cleanup on window unload
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', () => {
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeunload", () => {
     useTimerStore.getState().cleanupTimers();
   });
 }
