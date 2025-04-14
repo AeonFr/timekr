@@ -35,7 +35,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime, projectSlug
     if (!timerStopped && time > 0) {
       timerRef.current = window.setInterval(() => {
         tick(projectSlug);
-        
+
         // Update document title
         const updatedState = getTimerState(projectSlug);
         if (!updatedState.timerStopped && updatedState.time > 0) {
@@ -45,7 +45,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime, projectSlug
         }
       }, 1000);
     }
-    
+
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -125,7 +125,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime, projectSlug
       className="my-3 shadow-md bg-1 rounded-lg"
       style={{
         transition: "height 0.15s ease",
-        height: partialTimeCommiter ? "auto" : "70px",
+        height: partialTimeCommited ? "auto" : "70px",
       }}
     >
       <div className="flex p-4">
