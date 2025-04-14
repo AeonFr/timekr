@@ -187,9 +187,27 @@ export const useTimerStore = create<TimerState>()(
   ),
 );
 
-// Setup cleanup on window unload
+// Setup cleanup and confirmation on window unload
 if (typeof window !== "undefined") {
-  window.addEventListener("beforeunload", () => {
-    useTimerStore.getState().cleanupTimers();
+  window.addEventListener("beforeunload", (event) => {
+    const state = useTimerStore.getState();
+    const timers = state.timers;
+    
+    // Check if any timer is running
+    const anyTimerRunning = Object.values(timers).some(
+      timer => !timer.timerStopped && timer.time > 0
+    );
+    
+    // If any timer is running, show confirmation dialog
+    if (anyTimerRunning) {
+      // Standard way to show confirmation dialog
+      const message = "You have timers running. Are you sure you want to leave?";
+      event.preventDefault();
+      event.returnValue = message; // For older browsers
+      return message;
+    }
+    
+    // Always clean up timers
+    state.cleanupTimers();
   });
 }
