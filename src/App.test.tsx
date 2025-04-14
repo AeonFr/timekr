@@ -103,16 +103,31 @@ describe("Timekr", () => {
       return 0 as any;
     });
 
-    // Mock setInterval to execute callback immediately and return a fake timer ID
+    // Mock setInterval to capture callbacks but not execute them immediately
     const originalSetInterval = window.setInterval;
     let intervalCounter = 1;
+    const intervalCallbacks: Record<number, Function> = {};
+    
     vi.spyOn(window, "setInterval").mockImplementation((fn, _interval) => {
-      fn(); // Execute callback immediately once
-      return intervalCounter++ as any; // Return a unique ID
+      const id = intervalCounter++;
+      intervalCallbacks[id] = fn as Function;
+      return id as any;
     });
 
-    // Mock clearInterval
-    vi.spyOn(window, "clearInterval").mockImplementation(() => {});
+    // Mock clearInterval to remove callbacks
+    vi.spyOn(window, "clearInterval").mockImplementation((id) => {
+      delete intervalCallbacks[id as number];
+    });
+    
+    // Helper function to execute interval callbacks a specific number of times
+    const advanceTimersByTime = (seconds: number) => {
+      // Execute all active interval callbacks the specified number of times
+      for (let i = 0; i < seconds; i++) {
+        Object.values(intervalCallbacks).forEach(callback => {
+          callback();
+        });
+      }
+    };
 
     const { getByText, getByPlaceholder, getByTestId } = render(<App />);
 
@@ -134,8 +149,8 @@ describe("Timekr", () => {
     await getByText("Start").click();
 
     // Advance time by 5 seconds
-    // (execute the inteval 5 times)
-
+    advanceTimersByTime(5);
+    
     // Verify timer is counting down
     await expect.element(getByText("24:55")).toBeInTheDocument();
 
@@ -143,8 +158,8 @@ describe("Timekr", () => {
     await getByText("Pause").click();
 
     // Advance time more
-    // (execute the inteval 5 times)
-
+    advanceTimersByTime(5);
+    
     // Verify timer is paused (still shows the same time)
     await expect.element(getByText("24:55")).toBeInTheDocument();
 
@@ -170,8 +185,8 @@ describe("Timekr", () => {
     await getByText("Start").click();
 
     // Advance time by 3 minutes (180 seconds)
-    // (execute the interval 180 times)
-
+    advanceTimersByTime(180);
+    
     // Pause the timer
     await getByText("Pause").click();
 
@@ -197,8 +212,8 @@ describe("Timekr", () => {
     await getByText("Start").click();
 
     // Advance time by 2 minutes
-    // (execute the interval 120 times)
-
+    advanceTimersByTime(120);
+    
     // Verify both timers are running (check sidebar)
     await getByText("Timer Test Project 2").click();
     await expect.element(getByText("23:00")).toBeInTheDocument();
@@ -216,8 +231,8 @@ describe("Timekr", () => {
     await getByText("Start").click();
 
     // Advance time by 1 minute to trigger auto-commit
-    // (execute the interval 60 times)
-
+    advanceTimersByTime(60);
+    
     // Verify timer has reset after auto-commit
     await expect.element(getByText("00:00")).toBeInTheDocument();
 
