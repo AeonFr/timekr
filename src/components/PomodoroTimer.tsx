@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import Icon from "./Icon";
 import { useTimerStore } from "../store/timerStore";
 
@@ -8,8 +8,7 @@ interface PomodoroTimerProps {
 }
 
 const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime, projectSlug }) => {
-  const timerRef = useRef<number | null>(null);
-  const { startTimer, stopTimer, resetTimer, tick, getTimerState } = useTimerStore();
+  const { startTimer, stopTimer, resetTimer, getTimerState } = useTimerStore();
   const { time, timerStopped, partialTimeCommited } = getTimerState(projectSlug);
 
   // Format time with leading zeros
@@ -25,34 +24,8 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime, projectSlug
   useEffect(() => {
     if (time === 0 && !timerStopped) {
       commitOnePomodoro();
-      document.title = "Timekr";
-      stopTimer(projectSlug);
     }
-  }, [time, timerStopped, projectSlug, stopTimer]);
-
-  // Timer interval
-  useEffect(() => {
-    if (!timerStopped && time > 0) {
-      timerRef.current = window.setInterval(() => {
-        tick(projectSlug);
-
-        // Update document title
-        const updatedState = getTimerState(projectSlug);
-        if (!updatedState.timerStopped && updatedState.time > 0) {
-          document.title = `(${twoDigits(
-            Math.floor(updatedState.time / 60),
-          )}:${twoDigits(updatedState.time % 60)}) Timekr`;
-        }
-      }, 1000);
-    }
-
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, [timerStopped, projectSlug, tick, getTimerState]);
+  }, [time, timerStopped]);
 
   // Audio beep function
   const beep = () => {

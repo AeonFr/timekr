@@ -6,17 +6,24 @@ interface TimerState {
     time: number;
     timerStopped: boolean;
     lastUpdated: number;
+    intervalId?: number;
   }>;
   startTimer: (projectSlug: string) => void;
   stopTimer: (projectSlug: string) => void;
   resetTimer: (projectSlug: string) => void;
-  tick: (projectSlug: string) => void;
   getTimerState: (projectSlug: string) => {
     time: number;
     timerStopped: boolean;
     partialTimeCommited: number | false;
   };
+  updateDocumentTitle: (projectSlug: string) => void;
+  cleanupTimers: () => void;
 }
+
+// Helper function to format time with leading zeros
+const twoDigits = (num: number): string => {
+  return ("0" + num).slice(-2);
+};
 
 export const useTimerStore = create<TimerState>()(
   persist(
@@ -32,6 +39,37 @@ export const useTimerStore = create<TimerState>()(
           currentTimer.time = 1500;
         }
         
+        // Clear any existing interval
+        if (currentTimer.intervalId) {
+          window.clearInterval(currentTimer.intervalId);
+        }
+        
+        // Create a new interval
+        const intervalId = window.setInterval(() => {
+          const store = get();
+          const timers = store.timers;
+          const timer = timers[projectSlug];
+          
+          if (timer && !timer.timerStopped && timer.time > 0) {
+            set({
+              timers: {
+                ...timers,
+                [projectSlug]: {
+                  ...timer,
+                  time: timer.time - 1,
+                  lastUpdated: Date.now(),
+                }
+              }
+            });
+            
+            // Update document title
+            store.updateDocumentTitle(projectSlug);
+          } else if (timer && !timer.timerStopped && timer.time === 0) {
+            // Timer reached zero, update document title
+            document.title = "Timekr";
+          }
+        }, 1000);
+        
         set({
           timers: {
             ...timers,
@@ -39,9 +77,13 @@ export const useTimerStore = create<TimerState>()(
               ...currentTimer,
               timerStopped: false,
               lastUpdated: Date.now(),
+              intervalId: intervalId,
             }
           }
         });
+        
+        // Update document title immediately
+        get().updateDocumentTitle(projectSlug);
       },
       
       stopTimer: (projectSlug: string) => {
@@ -49,6 +91,11 @@ export const useTimerStore = create<TimerState>()(
         const currentTimer = timers[projectSlug];
         
         if (currentTimer) {
+          // Clear the interval
+          if (currentTimer.intervalId) {
+            window.clearInterval(currentTimer.intervalId);
+          }
+          
           set({
             timers: {
               ...timers,
@@ -56,9 +103,13 @@ export const useTimerStore = create<TimerState>()(
                 ...currentTimer,
                 timerStopped: true,
                 lastUpdated: Date.now(),
+                intervalId: undefined,
               }
             }
           });
+          
+          // Reset document title
+          document.title = "Timekr";
         }
       },
       
@@ -67,6 +118,11 @@ export const useTimerStore = create<TimerState>()(
         const currentTimer = timers[projectSlug];
         
         if (currentTimer) {
+          // Clear the interval
+          if (currentTimer.intervalId) {
+            window.clearInterval(currentTimer.intervalId);
+          }
+          
           set({
             timers: {
               ...timers,
@@ -75,27 +131,24 @@ export const useTimerStore = create<TimerState>()(
                 time: 1500,
                 timerStopped: true,
                 lastUpdated: Date.now(),
+                intervalId: undefined,
               }
             }
           });
+          
+          // Reset document title
+          document.title = "Timekr";
         }
       },
       
-      tick: (projectSlug: string) => {
+      updateDocumentTitle: (projectSlug: string) => {
         const timers = get().timers;
         const currentTimer = timers[projectSlug];
         
         if (currentTimer && !currentTimer.timerStopped && currentTimer.time > 0) {
-          set({
-            timers: {
-              ...timers,
-              [projectSlug]: {
-                ...currentTimer,
-                time: currentTimer.time - 1,
-                lastUpdated: Date.now(),
-              }
-            }
-          });
+          document.title = `(${twoDigits(
+            Math.floor(currentTimer.time / 60),
+          )}:${twoDigits(currentTimer.time % 60)}) Timekr`;
         }
       },
       
@@ -113,10 +166,41 @@ export const useTimerStore = create<TimerState>()(
           timerStopped: currentTimer.timerStopped,
           partialTimeCommited
         };
+      },
+      
+      cleanupTimers: () => {
+        const timers = get().timers;
+        
+        // Clear all intervals
+        Object.values(timers).forEach(timer => {
+          if (timer.intervalId) {
+            window.clearInterval(timer.intervalId);
+          }
+        });
       }
     }),
     {
       name: 'timekr-timer-storage',
+      // Don't persist intervalId
+      partialize: (state) => ({
+        timers: Object.fromEntries(
+          Object.entries(state.timers).map(([key, timer]) => [
+            key,
+            {
+              time: timer.time,
+              timerStopped: timer.timerStopped,
+              lastUpdated: timer.lastUpdated
+            }
+          ])
+        )
+      }),
     }
   )
 );
+
+// Setup cleanup on window unload
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    useTimerStore.getState().cleanupTimers();
+  });
+}
