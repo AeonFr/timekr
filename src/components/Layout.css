@@ -47,15 +47,17 @@ p {
   @apply text-red border-transparent;
 }
 
-.btn-danger:hover {
-  @apply bg-red-lightest;
+.btn-danger:hover,
+.btn-danger-secondary:hover {
+  @apply text-red bg-red-lightest;
 }
 
 .dark-interface .btn-danger:hover {
   @apply bg-red-darkest;
 }
 
-.btn-default {
+.btn-default,
+.btn-danger-secondary {
   @apply text-grey-darker border-transparent;
 }
 

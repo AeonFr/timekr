@@ -224,7 +224,7 @@ const Single: React.FC = () => {
       ) : null}
 
       <button
-        className="block mt-2 btn btn-danger"
+        className="block mt-2 btn btn-danger-secondary"
         onClick={handleDeleteProject}
       >
         <Icon name="trash" />
