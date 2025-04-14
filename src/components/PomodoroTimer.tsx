@@ -1,15 +1,20 @@
-import React, { useEffect } from "react";
-import Icon from "./Icon";
+import React, { useEffect, useState } from "react";
 import { useTimerStore } from "../store/timerStore";
+import Icon from "./Icon";
+import TimeInput from "./TimeInput";
 
 interface PomodoroTimerProps {
   onCommitTime: (data: { amount: number | string }) => void;
   projectSlug: string;
 }
 
-const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime, projectSlug }) => {
+const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
+  onCommitTime,
+  projectSlug,
+}) => {
   const { startTimer, stopTimer, resetTimer, getTimerState } = useTimerStore();
-  const { time, timerStopped, partialTimeCommited } = getTimerState(projectSlug);
+  const { time, timerStopped, partialTimeCommited } =
+    getTimerState(projectSlug);
 
   // Format time with leading zeros
   const twoDigits = (num: number): string => {
@@ -52,6 +57,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime, projectSlug
   const handleStartTimer = () => {
     if (timerStopped === false) return;
     startTimer(projectSlug);
+    setCustomTimeConfig(null);
   };
 
   const handleStopTimer = () => {
@@ -93,18 +99,40 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime, projectSlug
     }
   };
 
+  // custom time config
+  const [customTimeConfig, setCustomTimeConfig] = useState<number | null>(null);
+  const toggleCustomTimeConfig = () => {
+    if (customTimeConfig !== null) {
+      setCustomTimeConfig(null);
+    } else {
+      // default value
+      setCustomTimeConfig(25);
+    }
+  };
+
   return (
     <section
       className="my-3 shadow-md bg-1 rounded-lg"
       style={{
         transition: "height 0.15s ease",
-        height: partialTimeCommited ? "auto" : "70px",
+        height:
+          partialTimeCommited || customTimeConfig !== null ? "auto" : "70px",
       }}
     >
       <div className="flex p-4">
         <div className="m:inline-block mb-4 m:mb-0 px-4 text-3xl text-1 font-mono mr-auto">
           {prettyTime}
         </div>
+
+        {timerStopped && !partialTimeCommited && (
+          <button
+            type="button"
+            className="btn btn-default align-top"
+            onClick={toggleCustomTimeConfig}
+          >
+            Configure
+          </button>
+        )}
 
         <button
           type="button"
@@ -144,6 +172,15 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime, projectSlug
           <button type="submit" className="ml-auto btn btn-primary">
             Commit
           </button>
+        </form>
+      )}
+
+      {customTimeConfig !== null && !partialTimeCommited && (
+        <form className="m:flex items-center p-4 show-ltr">
+          <TimeInput
+            value={customTimeConfig}
+            onChange={(value) => setCustomTimeConfig(value)}
+          />
         </form>
       )}
     </section>
