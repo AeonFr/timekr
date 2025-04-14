@@ -157,7 +157,7 @@ const Single: React.FC = () => {
         </form>
       )}
 
-      <PomodoroTimer onCommitTime={handleCommitTime} />
+      <PomodoroTimer onCommitTime={handleCommitTime} projectSlug={slug} />
 
       <section
         id="stats"
