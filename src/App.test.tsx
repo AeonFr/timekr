@@ -72,25 +72,14 @@ describe("Timekr", () => {
   });
 
   it("supports timer functionality with multiple timers, custom duration, and time tracking", async () => {
-    // Mock the AudioContext and beep function to avoid actual sounds
-    const mockAudioContext = {
-      createOscillator: () => ({
-        type: "",
-        frequency: { value: 0 },
-        connect: vi.fn(),
-        start: vi.fn(),
-      }),
-      createGain: () => ({
-        connect: vi.fn(),
-        gain: { exponentialRampToValueAtTime: vi.fn() },
-      }),
-      currentTime: 0,
-      destination: {},
-    };
-
-    vi.spyOn(window, "AudioContext").mockImplementation(
-      () => mockAudioContext as unknown as AudioContext,
-    );
+    // Mock the Audio class to avoid actual sounds
+    const mockAudioPlay = vi.fn().mockResolvedValue(undefined);
+    const originalAudio = window.Audio;
+    
+    // @ts-expect-error - mocking Audio constructor
+    window.Audio = vi.fn().mockImplementation(() => ({
+      play: mockAudioPlay
+    }));
     vi.spyOn(window, "confirm").mockReturnValue(true);
 
     // Mock setTimeout to execute immediately
@@ -258,5 +247,6 @@ describe("Timekr", () => {
     // Restore original functions
     window.setTimeout = originalSetTimeout;
     window.setInterval = originalSetInterval;
+    window.Audio = originalAudio;
   });
 });
