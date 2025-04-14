@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import moment from "moment";
 import { groupBy, sumBy } from "lodash";
 import Switch from "../Switch";
@@ -24,6 +24,10 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
   totalTime = 0,
 }) => {
   const [viewType, setViewType] = useState<string>("Per day");
+  const [visibleWeeks, setVisibleWeeks] = useState<number>(
+    window.innerWidth < 840 ? 4 : 6,
+  );
+  const graphRef = useRef<HTMLDivElement>(null);
   // Find the earliest commit date or use current date if no commits
   const startOfProject = useMemo(() => {
     if (commits.length === 0) {
@@ -51,13 +55,29 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     return result;
   }, [commits]);
 
-  // Generate data for the last 6 weeks
+  // Update visible weeks based on screen width using matchMedia
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 840px)");
+
+    const handleMediaQueryChange = (
+      e: MediaQueryListEvent | MediaQueryList,
+    ) => {
+      setVisibleWeeks(e.matches ? 4 : 6);
+    };
+
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
+    return () => {
+      mediaQuery.removeEventListener("change", handleMediaQueryChange);
+    };
+  }, []);
+
+  // Generate data for the last N weeks
   const weeksData = useMemo(() => {
     const today = moment();
     const weeks: DayData[][] = [];
 
-    // Generate 6 weeks of data
-    for (let weekIndex = 0; weekIndex < 6; weekIndex++) {
+    // Generate N weeks of data
+    for (let weekIndex = 0; weekIndex < visibleWeeks; weekIndex++) {
       const week: DayData[] = [];
 
       // For each day of the week (Sunday = 0, Saturday = 6)
@@ -79,7 +99,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     }
 
     return weeks.reverse(); // Reverse so oldest week is first
-  }, [commits, startOfProject, commitsByDay]);
+  }, [visibleWeeks, commits, startOfProject, commitsByDay]);
 
   // Generate week labels
   const weekLabels = useMemo(() => {
@@ -159,15 +179,22 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     };
   }, [weeksData, totalTime]);
 
-  // State for animated viewBox
-  const [viewBox, setViewBox] = useState("0 0 335 90");
+  // Calculate the SVG viewBox based on visible weeks
+  const svgViewBox = useMemo(() => {
+    const width = 35 + visibleWeeks * 50;
+    return viewType === "Per day" ? `0 0 ${width} 90` : `30 0 ${width + 10} 90`;
+  }, [visibleWeeks, viewType]);
 
-  // Update viewBox with animation when viewType changes
+  // State for animated viewBox
+  const [animatedViewBox, setAnimatedViewBox] = useState(svgViewBox);
+
+  // Update viewBox with animation when viewType or visibleWeeks changes
   useEffect(() => {
     if (viewType === "Per day") {
       // Animate from line graph to per day view
       const startTime = Date.now();
       const duration = 300; // 300ms animation
+      const baseWidth = 35 + visibleWeeks * 50;
       const startValue = 30;
       const endValue = 0;
 
@@ -179,9 +206,10 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
         const easeProgress = 1 - Math.pow(1 - progress, 2);
 
         const currentX = startValue - (startValue - endValue) * easeProgress;
-        const currentWidth = 345 - (345 - 335) * easeProgress;
+        const currentWidth =
+          baseWidth + 10 - (baseWidth + 10 - baseWidth) * easeProgress;
 
-        setViewBox(`${currentX} 0 ${currentWidth} 90`);
+        setAnimatedViewBox(`${currentX} 0 ${currentWidth} 90`);
 
         if (progress < 1) {
           requestAnimationFrame(animate);
@@ -193,6 +221,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
       // Animate from per day to line graph view
       const startTime = Date.now();
       const duration = 300; // 300ms animation
+      const baseWidth = 35 + visibleWeeks * 50;
       const startValue = 0;
       const endValue = 30;
 
@@ -204,9 +233,10 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
         const easeProgress = 1 - Math.pow(1 - progress, 2);
 
         const currentX = startValue + (endValue - startValue) * easeProgress;
-        const currentWidth = 335 + (345 - 335) * easeProgress;
+        const currentWidth =
+          baseWidth + (baseWidth + 10 - baseWidth) * easeProgress;
 
-        setViewBox(`${currentX} 0 ${currentWidth} 90`);
+        setAnimatedViewBox(`${currentX} 0 ${currentWidth} 90`);
 
         if (progress < 1) {
           requestAnimationFrame(animate);
@@ -215,10 +245,10 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
 
       requestAnimationFrame(animate);
     }
-  }, [viewType]);
+  }, [viewType, visibleWeeks, svgViewBox]);
 
   return (
-    <div aria-hidden>
+    <div ref={graphRef}>
       <div className="flex justify-end items-center mb-2">
         <span className="text-xs text-grey-darker mr-2">Graph: </span>
         <Switch
@@ -228,9 +258,9 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
         />
       </div>
       <svg
-        viewBox={viewBox}
+        viewBox={animatedViewBox}
         className="text-1 cursor-default"
-        style={{ height: "142px" }}
+        style={{ height: "142px", width: "100%" }}
       >
         {/* Day labels */}
         <g style={{ fontSize: "8px", fill: "currentColor" }}>
@@ -292,13 +322,13 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
             />
             {/* Y-axis labels (right side) */}
             <g style={{ fontSize: "8px", fill: "hsla(207, 70%, 50%, 100%)" }}>
-              <text x="336" y="14" textAnchor="start">
+              <text x={36 + visibleWeeks * 50} y="14" textAnchor="start">
                 {Math.round(cumulativeTimeData.maxTotal)}min
               </text>
-              <text x="336" y="44" textAnchor="start">
+              <text x={36 + visibleWeeks * 50} y="44" textAnchor="start">
                 {Math.round(cumulativeTimeData.maxTotal / 2)}min
               </text>
-              <text x="336" y="74" textAnchor="start">
+              <text x={36 + visibleWeeks * 50} y="74" textAnchor="start">
                 0 min
               </text>
             </g>
