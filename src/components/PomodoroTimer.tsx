@@ -12,7 +12,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
   onCommitTime,
   projectSlug,
 }) => {
-  const { startTimer, stopTimer, resetTimer, getTimerState } = useTimerStore();
+  const { startTimer, stopTimer, resetTimer, getTimerState, setCustomTime } = useTimerStore();
   const { time, timerStopped, partialTimeCommited } =
     getTimerState(projectSlug);
 
@@ -110,6 +110,16 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
     }
   };
 
+  const saveCustomTime = () => {
+    if (customTimeConfig !== null) {
+      // Use the store method to set custom time
+      setCustomTime(projectSlug, customTimeConfig);
+      
+      // Close the custom time form
+      setCustomTimeConfig(null);
+    }
+  };
+
   return (
     <section
       className="my-3 shadow-md bg-1 rounded-lg"
@@ -176,11 +186,36 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
       )}
 
       {customTimeConfig !== null && !partialTimeCommited && (
-        <form className="m:flex items-center p-4 show-ltr">
-          <TimeInput
-            value={customTimeConfig}
-            onChange={(value) => setCustomTimeConfig(value)}
-          />
+        <form 
+          className="m:flex items-center p-4 show-ltr"
+          onSubmit={(e) => {
+            e.preventDefault();
+            saveCustomTime();
+          }}
+        >
+          <div className="flex-grow">
+            <label className="block text-sm mb-1">Set timer duration (minutes):</label>
+            <TimeInput
+              value={customTimeConfig}
+              onChange={(value) => setCustomTimeConfig(value)}
+            />
+          </div>
+          <div className="ml-auto mt-2">
+            <button 
+              type="button" 
+              className="btn btn-default mr-2"
+              onClick={() => setCustomTimeConfig(null)}
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              className="btn btn-primary"
+            >
+              <Icon name="save" className="w-4 h-4 mr-1" />
+              Save
+            </button>
+          </div>
         </form>
       )}
     </section>

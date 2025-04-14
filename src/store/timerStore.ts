@@ -20,6 +20,7 @@ interface TimerState {
     partialTimeCommited: number | false;
   };
   cleanupTimers: () => void;
+  setCustomTime: (projectSlug: string, minutes: number) => void;
 }
 
 export const useTimerStore = create<TimerState>()(
@@ -165,6 +166,30 @@ export const useTimerStore = create<TimerState>()(
           if (timer.intervalId) {
             window.clearInterval(timer.intervalId);
           }
+        });
+      },
+      
+      setCustomTime: (projectSlug: string, minutes: number) => {
+        const timers = get().timers;
+        const currentTimer = timers[projectSlug] || {
+          time: 1500,
+          timerStopped: true,
+          lastUpdated: Date.now(),
+        };
+        
+        // Convert minutes to seconds
+        const timeInSeconds = minutes * 60;
+        
+        set({
+          timers: {
+            ...timers,
+            [projectSlug]: {
+              ...currentTimer,
+              time: timeInSeconds,
+              timerStopped: true,
+              lastUpdated: Date.now(),
+            },
+          },
         });
       },
     }),
