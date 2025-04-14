@@ -99,7 +99,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
     }
 
     return weeks.reverse(); // Reverse so oldest week is first
-  }, [commits, startOfProject, commitsByDay]);
+  }, [visibleWeeks, commits, startOfProject, commitsByDay]);
 
   // Generate week labels
   const weekLabels = useMemo(() => {
@@ -248,7 +248,7 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
   }, [viewType, visibleWeeks, svgViewBox]);
 
   return (
-    <div aria-hidden ref={graphRef}>
+    <div ref={graphRef}>
       <div className="flex justify-end items-center mb-2">
         <span className="text-xs text-grey-darker mr-2">Graph: </span>
         <Switch
@@ -322,13 +322,13 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
             />
             {/* Y-axis labels (right side) */}
             <g style={{ fontSize: "8px", fill: "hsla(207, 70%, 50%, 100%)" }}>
-              <text x="336" y="14" textAnchor="start">
+              <text x={36 + visibleWeeks * 50} y="14" textAnchor="start">
                 {Math.round(cumulativeTimeData.maxTotal)}min
               </text>
-              <text x="336" y="44" textAnchor="start">
+              <text x={36 + visibleWeeks * 50} y="44" textAnchor="start">
                 {Math.round(cumulativeTimeData.maxTotal / 2)}min
               </text>
-              <text x="336" y="74" textAnchor="start">
+              <text x={36 + visibleWeeks * 50} y="74" textAnchor="start">
                 0 min
               </text>
             </g>
