@@ -151,8 +151,14 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
   };
 
   return (
-    <section>
-      <div className="flex my-3 p-4 shadow-md bg-1 rounded-lg text-center">
+    <section
+      className="my-3 shadow-md bg-1 rounded-lg"
+      style={{
+        transition: "height 0.15s ease",
+        height: partialTimeCommiter ? "auto" : "70px",
+      }}
+    >
+      <div className="flex p-4">
         <div className="m:inline-block mb-4 m:mb-0 px-4 text-3xl text-1 font-mono mr-auto">
           {prettyTime}
         </div>
@@ -181,22 +187,19 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
 
       {partialTimeCommiter !== false && (
         <form
-          className="m:flex items-center p-2 bg-1 shadow-md my-2 rounded-lg show-ltr"
+          className="m:flex items-center p-4 show-ltr"
           onSubmit={commitPartialTime}
         >
-          <div className="font-bold text-left m-2">
-            Commit {partialTimeCommiter} minute
-            {partialTimeCommiter > 1 ? "s" : ""} and reset?
+          <div className="text-left px-4">
+            Commit{" "}
+            <span className="font-bold">
+              {partialTimeCommiter} minute
+              {partialTimeCommiter > 1 ? "s" : ""}
+            </span>{" "}
+            and reset timer?
           </div>
           <button type="submit" className="ml-auto btn btn-primary">
             Commit
-          </button>
-          <button
-            type="button"
-            className="btn btn-default ml-1"
-            onClick={() => setPartialTimeCommiter(false)}
-          >
-            Cancel
           </button>
         </form>
       )}

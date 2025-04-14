@@ -1,3 +1,7 @@
+:root {
+  interpolate-size: allow-keywords;
+}
+
 body {
   color: #333;
   transition: background-color 0.2s;
@@ -125,7 +129,8 @@ p {
     transform: translateX(0);
   }
 }
-.childs-animated > * > *:nth-child(1) {
+.childs-animated > * > *:nth-child(1),
+.show-ltr {
   animation-delay: 0s;
 }
 .childs-animated > * > *:nth-child(2) {
