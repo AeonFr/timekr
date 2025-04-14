@@ -1,36 +1,16 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import Icon from "./Icon";
+import { useTimerStore } from "../store/timerStore";
 
 interface PomodoroTimerProps {
   onCommitTime: (data: { amount: number | string }) => void;
+  projectSlug: string;
 }
 
-const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
-  const [time, setTime] = useState(1500);
-  const [timerStopped, setTimerStopped] = useState(true);
-  const [partialTimeCommiter, setPartialTimeCommiter] = useState<
-    number | false
-  >(false);
+const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime, projectSlug }) => {
   const timerRef = useRef<number | null>(null);
-
-  // Load saved timer on mount
-  useEffect(() => {
-    const savedTimer = localStorage.getItem("currentTimer");
-    if (savedTimer) {
-      setTime(Number(savedTimer));
-      localStorage.removeItem("currentTimer");
-    }
-  }, []);
-
-  // Save timer on unmount
-  useEffect(() => {
-    return () => {
-      if (time > 0 && time < 1500) {
-        localStorage.setItem("currentTimer", time.toString());
-        setTimerStopped(true);
-      }
-    };
-  }, []);
+  const { startTimer, stopTimer, resetTimer, tick, getTimerState } = useTimerStore();
+  const { time, timerStopped, partialTimeCommited } = getTimerState(projectSlug);
 
   // Format time with leading zeros
   const twoDigits = (num: number): string => {
@@ -41,40 +21,38 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
     time % 60,
   )}`;
 
-  // Timer tick function
-  const tick = useCallback(() => {
-    setTime((prevTime) => {
-      if (prevTime > 0) {
-        document.title = `(${twoDigits(
-          Math.floor((prevTime - 1) / 60),
-        )}:${twoDigits((prevTime - 1) % 60)}) Timekr`;
-        return prevTime - 1;
-      }
-      return prevTime;
-    });
-  }, []);
-
   // Check if timer reached zero
   useEffect(() => {
     if (time === 0 && !timerStopped) {
       commitOnePomodoro();
       document.title = "Timekr";
-      setTimerStopped(true);
+      stopTimer(projectSlug);
     }
-  }, [time, timerStopped]);
+  }, [time, timerStopped, projectSlug, stopTimer]);
 
   // Timer interval
   useEffect(() => {
     if (!timerStopped && time > 0) {
-      timerRef.current = window.setInterval(tick, 1000);
+      timerRef.current = window.setInterval(() => {
+        tick(projectSlug);
+        
+        // Update document title
+        const updatedState = getTimerState(projectSlug);
+        if (!updatedState.timerStopped && updatedState.time > 0) {
+          document.title = `(${twoDigits(
+            Math.floor(updatedState.time / 60),
+          )}:${twoDigits(updatedState.time % 60)}) Timekr`;
+        }
+      }, 1000);
     }
+    
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
     };
-  }, [timerStopped, tick]);
+  }, [timerStopped, projectSlug, tick, getTimerState]);
 
   // Audio beep function
   const beep = () => {
@@ -98,31 +76,24 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
   };
 
   // Timer control functions
-  const startTimer = () => {
+  const handleStartTimer = () => {
     if (timerStopped === false) return;
-    if (time === 0) setTime(1500);
-    setTimerStopped(false);
-    setPartialTimeCommiter(false);
+    startTimer(projectSlug);
   };
 
-  const stopTimer = () => {
+  const handleStopTimer = () => {
     if (timerStopped) return;
-    setTimerStopped(true);
-    if (time <= 1500) {
-      setPartialTimeCommiter(Math.max(1, Math.round((1500 - time) / 60)));
-    }
+    stopTimer(projectSlug);
   };
 
-  const resetTimer = (askConfirmation = true) => {
+  const handleResetTimer = (askConfirmation = true) => {
     if (
       askConfirmation &&
       !confirm("Are you sure you want to reset the timer?")
     ) {
       return;
     }
-    setTimerStopped(true);
-    setTime(1500);
-    setPartialTimeCommiter(false);
+    resetTimer(projectSlug);
   };
 
   // Commit functions
@@ -143,10 +114,9 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
 
   const commitPartialTime = (e: React.FormEvent) => {
     e.preventDefault();
-    if (partialTimeCommiter !== false) {
-      onCommitTime({ amount: partialTimeCommiter });
-      resetTimer(false);
-      setPartialTimeCommiter(false);
+    if (partialTimeCommited !== false) {
+      onCommitTime({ amount: partialTimeCommited });
+      resetTimer(projectSlug);
     }
   };
 
@@ -166,7 +136,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
         <button
           type="button"
           className="btn btn-primary align-top"
-          onClick={timerStopped ? startTimer : stopTimer}
+          onClick={timerStopped ? handleStartTimer : handleStopTimer}
         >
           <Icon
             name={timerStopped ? "play-circle" : "pause-circle"}
@@ -178,14 +148,14 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
         <button
           type="button"
           className="btn btn-danger align-top"
-          onClick={resetTimer}
+          onClick={() => handleResetTimer()}
         >
           <Icon name="x-circle" className="w-5 h-5" />
           {" Reset"}
         </button>
       </div>
 
-      {partialTimeCommiter !== false && (
+      {partialTimeCommited !== false && (
         <form
           className="m:flex items-center p-4 show-ltr"
           onSubmit={commitPartialTime}
@@ -193,8 +163,8 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ onCommitTime }) => {
           <div className="text-left px-4">
             Commit{" "}
             <span className="font-bold">
-              {partialTimeCommiter} minute
-              {partialTimeCommiter > 1 ? "s" : ""}
+              {partialTimeCommited} minute
+              {partialTimeCommited > 1 ? "s" : ""}
             </span>{" "}
             and reset timer?
           </div>
