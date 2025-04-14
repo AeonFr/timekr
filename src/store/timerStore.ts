@@ -215,35 +215,15 @@ export const useTimerStore = create<TimerState>()((set, get) => ({
     // Play sound effect (this will only work if the page is active)
     if (typeof window !== "undefined") {
       try {
-        const beep = () => {
-          const context = new (window.AudioContext || 
-            (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-          const oscillator = context.createOscillator();
-          oscillator.type = "square";
-          oscillator.frequency.value = 830.6;
-          const gain = context.createGain();
-          oscillator.connect(gain);
-          gain.connect(context.destination);
-          oscillator.start(0);
-
-          setTimeout(() => {
-            gain.gain.exponentialRampToValueAtTime(
-              0.00001,
-              context.currentTime + 0.04,
-            );
-          }, 500);
+        const playChime = () => {
+          const audio = new Audio('/assets/chime.mp3');
+          audio.play().catch(e => {
+            console.error("Failed to play chime sound:", e);
+          });
         };
 
-        // Play beep sound pattern
-        beep();
-        const interval = 800;
-        setTimeout(() => {
-          beep();
-          setTimeout(() => {
-            beep();
-            setTimeout(beep, interval);
-          }, interval);
-        }, interval);
+        // Play the chime sound
+        playChime();
       } catch (e) {
         console.error("Failed to play sound:", e);
       }

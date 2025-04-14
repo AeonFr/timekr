@@ -97,7 +97,7 @@ const Single: React.FC = () => {
     if (
       !slug ||
       !window.confirm(
-        `Are you sure you want to delete ${project ? project.name : slug}?`,
+        `Are you sure you want to delete ${project !== -1 ? project.name : slug}?`,
       )
     ) {
       return false;
@@ -157,9 +157,9 @@ const Single: React.FC = () => {
         </form>
       )}
 
-      <PomodoroTimer 
-        onCommitTime={({ amount, date }) => handleCommitTime({ amount, date })} 
-        projectSlug={slug} 
+      <PomodoroTimer
+        onCommitTime={({ amount, date }) => handleCommitTime({ amount, date })}
+        projectSlug={slug}
       />
 
       <section
