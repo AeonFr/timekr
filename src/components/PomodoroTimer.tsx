@@ -1,20 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTimerStore } from "../store/timerStore";
 import Icon from "./Icon";
 import TimeInput from "./TimeInput";
 
 interface PomodoroTimerProps {
-  onCommitTime: (data: { amount: number | string }) => void;
   projectSlug: string;
 }
 
-const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
-  onCommitTime,
-  projectSlug,
-}) => {
+const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ projectSlug }) => {
   const { startTimer, stopTimer, resetTimer, getTimerState, setCustomTime } =
     useTimerStore();
-  const { time, timerStopped, partialTimeCommited, initialTime } =
+  const { time, timerStopped, partialTimeCommited } =
     getTimerState(projectSlug);
 
   // Format time with leading zeros
