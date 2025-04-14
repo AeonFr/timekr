@@ -54,6 +54,7 @@ const List: React.FC = () => {
               <div className="flex justify-between items-center">
                 <span>{project.name}</span>
                 {(() => {
+                  if (projectSlug === slug) return null;
                   const { time, timerStopped } = getTimerState(projectSlug);
                   if (!timerStopped && time > 0) {
                     return (
