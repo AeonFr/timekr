@@ -1,3 +1,7 @@
+:root {
+  interpolate-size: allow-keywords;
+}
+
 body {
   color: #333;
   transition: background-color 0.2s;
@@ -43,15 +47,17 @@ p {
   @apply text-red border-transparent;
 }
 
-.btn-danger:hover {
-  @apply bg-red-lightest;
+.btn-danger:hover,
+.btn-danger-secondary:hover {
+  @apply text-red bg-red-lightest;
 }
 
 .dark-interface .btn-danger:hover {
   @apply bg-red-darkest;
 }
 
-.btn-default {
+.btn-default,
+.btn-danger-secondary {
   @apply text-grey-darker border-transparent;
 }
 
@@ -65,6 +71,10 @@ p {
 
 .btn-tab {
   border-bottom-color: transparent !important;
+}
+
+.btn-icon {
+  @apply px-2;
 }
 
 .input {
@@ -125,7 +135,8 @@ p {
     transform: translateX(0);
   }
 }
-.childs-animated > * > *:nth-child(1) {
+.childs-animated > * > *:nth-child(1),
+.show-ltr {
   animation-delay: 0s;
 }
 .childs-animated > * > *:nth-child(2) {

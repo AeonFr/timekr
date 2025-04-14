@@ -1,6 +1,6 @@
 # timekr
 
-> Time track made simple
+> Time tracking made simple
 
 Live at: timekr.netlify.com
 
@@ -8,11 +8,8 @@ This site was inspired by tomato-timer.com, a simple Pomodoro timer (timer that 
 
 Data is stored both in `localStorage` and as a cookie, so it should persist in your browser as long as you don't delete the cache.
 
-*Disclaimer:* Please notice this data is only stored in a single browser and in a single device, and that you should keep a separate record for the time you spent in projects in a more reliable place.
+_Disclaimer:_ Please notice this data is only stored in a single browser and in a single device, and that you should keep a separate record for the time you spent in projects in a more reliable place.
 Also notice that, according to the Pomodoro work technique, you should alternate between 5 and 25 minutes breaks. This timer doesn't commit breaks nor does it count the time for them, so for the time being, you have to come up with a break policy and add the time manually.
-
-
-
 
 ## LICENCE
 
@@ -26,23 +23,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## About
 
-Build in Nuxt, CSS generated using tailwindcss.com
+Build in React and TypeScript, CSS generated using tailwindcss.com
 
 ## Build Setup
 
-``` bash
+```bash
 # install dependencies
 $ npm install
 
 # serve with hot reload at localhost:3000
 $ npm run dev
 
-# build for production and launch server
+# build for production
 $ npm run build
-$ npm start
-
-# generate static project
-$ npm run generate
 ```
-
-For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).

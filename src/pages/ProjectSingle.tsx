@@ -16,7 +16,7 @@ const ProjectSingle: React.FC = () => {
 
   return (
     <Layout>
-      <Single />
+      <Single key={slug} />
     </Layout>
   );
 };

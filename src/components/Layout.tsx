@@ -128,11 +128,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 checked={darkInterface === "0"}
                 onChange={handleDarkInterfaceChange}
               />
-              <Icon name="sun" />
-              Light
+              <Icon name="sun" /> Light
             </label>
             <label
-              className={`inline-block btn ${
+              className={`inline-block btn ml-2 ${
                 darkInterface === "1" ? "btn-primary" : "btn-default"
               }`}
             >
@@ -144,8 +143,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 checked={darkInterface === "1"}
                 onChange={handleDarkInterfaceChange}
               />
-              <Icon name="moon" />
-              Dark
+              <Icon name="moon" /> Dark
             </label>
           </div>
 
@@ -153,15 +151,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             My Data
           </h1>
           <button className="btn btn-default" onClick={exportData}>
-            <Icon name="download-cloud" />
-            Export
+            <Icon name="download-cloud" /> Export
           </button>
           <button
             className="btn btn-default"
             onClick={() => setShowImportForm(true)}
           >
-            <Icon name="upload-cloud" />
-            Import
+            <Icon name="upload-cloud" /> Import
           </button>
 
           {showImportForm && (

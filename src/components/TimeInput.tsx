@@ -37,7 +37,7 @@ const TimeInput: React.FC<TimeInputProps> = ({ value = 0, onChange }) => {
   };
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center" style={{ maxWidth: "280px" }}>
       <label className="block text-left">
         <div className="px-2 text-1">Hours:</div>
         <input

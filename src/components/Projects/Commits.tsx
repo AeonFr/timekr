@@ -57,7 +57,7 @@ const Commits: React.FC = () => {
         (numAmount > 60 || numAmount < -60 ? "s" : "")
       );
     } else {
-      return amount + " minutes";
+      return amount + " minute" + (amount !== 1 ? "s" : "");
     }
   };
 
@@ -72,7 +72,7 @@ const Commits: React.FC = () => {
       // If date was changed, update the commited_at timestamp
       if (editCommit.editDate) {
         const newDateTime = moment(editCommit.editDate);
-        
+
         // Convert to timestamp
         editCommit.new_commited_at = +newDateTime;
       }
@@ -183,7 +183,7 @@ const Commits: React.FC = () => {
 
                           <div className="mb-2">
                             <DateInput
-                              value={editCommit.editDate || ''}
+                              value={editCommit.editDate || ""}
                               onChange={(value) =>
                                 setEditCommit({
                                   ...editCommit,

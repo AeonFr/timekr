@@ -1,7 +1,7 @@
 {
   "name": "timekr",
   "version": "1.0.0",
-  "description": "Time track made simple",
+  "description": "Time tracking made simple",
   "author": "aeonfr",
   "private": true,
   "scripts": {

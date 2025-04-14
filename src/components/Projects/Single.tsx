@@ -157,7 +157,10 @@ const Single: React.FC = () => {
         </form>
       )}
 
-      <PomodoroTimer onCommitTime={handleCommitTime} />
+      <PomodoroTimer 
+        onCommitTime={({ amount, date }) => handleCommitTime({ amount, date })} 
+        projectSlug={slug} 
+      />
 
       <section
         id="stats"
@@ -224,7 +227,7 @@ const Single: React.FC = () => {
       ) : null}
 
       <button
-        className="block mt-2 btn btn-danger"
+        className="block mt-2 btn btn-danger-secondary"
         onClick={handleDeleteProject}
       >
         <Icon name="trash" />
