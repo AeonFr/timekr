@@ -106,6 +106,17 @@ describe("Timekr", () => {
       return 0 as any;
     });
     
+    // Mock setInterval to execute callback immediately and return a fake timer ID
+    const originalSetInterval = window.setInterval;
+    let intervalCounter = 1;
+    vi.spyOn(window, 'setInterval').mockImplementation((fn, _interval) => {
+      fn(); // Execute callback immediately once
+      return intervalCounter++ as any; // Return a unique ID
+    });
+    
+    // Mock clearInterval
+    vi.spyOn(window, 'clearInterval').mockImplementation(() => {});
+    
     const { getByText, getByPlaceholder, getAllByText, queryByText } = render(<App />);
     
     // Create two projects for testing multiple timers
@@ -221,5 +232,6 @@ describe("Timekr", () => {
     // Restore original functions
     Date.now = originalDateNow;
     window.setTimeout = originalSetTimeout;
+    window.setInterval = originalSetInterval;
   });
 });
