@@ -75,10 +75,9 @@ describe("Timekr", () => {
     // Mock the Audio class to avoid actual sounds
     const mockAudioPlay = vi.fn().mockResolvedValue(undefined);
     const originalAudio = window.Audio;
-    
-    // @ts-expect-error - mocking Audio constructor
+
     window.Audio = vi.fn().mockImplementation(() => ({
-      play: mockAudioPlay
+      play: mockAudioPlay,
     }));
     vi.spyOn(window, "confirm").mockReturnValue(true);
 
