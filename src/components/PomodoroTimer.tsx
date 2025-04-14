@@ -142,6 +142,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
                 className="btn btn-default btn-icon ml-2 align-top text-sm"
                 onClick={toggleCustomTimeConfig}
                 aria-label="Configure timer"
+                data-testid="configure-timer"
               >
                 <Icon name="edit-3" className="w-4 h-4" />
               </button>

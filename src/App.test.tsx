@@ -10,7 +10,7 @@ describe("Timekr", () => {
     localStorage.removeItem("timekr-timer-storage");
     Cookie.remove("projects");
   });
-  
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -73,7 +73,7 @@ describe("Timekr", () => {
 
     await expect.element(getByText("Test project (r)")).not.toBeInTheDocument();
   });
-  
+
   it("supports timer functionality with multiple timers, custom duration, and time tracking", async () => {
     // Mock the AudioContext and beep function to avoid actual sounds
     const mockAudioContext = {
@@ -90,147 +90,145 @@ describe("Timekr", () => {
       currentTime: 0,
       destination: {},
     };
-    
-    vi.spyOn(window, 'AudioContext').mockImplementation(() => mockAudioContext as any);
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
-    
-    // Mock Date.now to control time
-    const originalDateNow = Date.now;
-    let mockTime = Date.now();
-    vi.spyOn(Date, 'now').mockImplementation(() => mockTime);
-    
+
+    vi.spyOn(window, "AudioContext").mockImplementation(
+      () => mockAudioContext as any,
+    );
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+
     // Mock setTimeout to execute immediately
     const originalSetTimeout = window.setTimeout;
-    vi.spyOn(window, 'setTimeout').mockImplementation((fn) => {
+    vi.spyOn(window, "setTimeout").mockImplementation((fn) => {
       fn();
       return 0 as any;
     });
-    
+
     // Mock setInterval to execute callback immediately and return a fake timer ID
     const originalSetInterval = window.setInterval;
     let intervalCounter = 1;
-    vi.spyOn(window, 'setInterval').mockImplementation((fn, _interval) => {
+    vi.spyOn(window, "setInterval").mockImplementation((fn, _interval) => {
       fn(); // Execute callback immediately once
       return intervalCounter++ as any; // Return a unique ID
     });
-    
+
     // Mock clearInterval
-    vi.spyOn(window, 'clearInterval').mockImplementation(() => {});
-    
-    const { getByText, getByPlaceholder, getAllByText, queryByText } = render(<App />);
-    
+    vi.spyOn(window, "clearInterval").mockImplementation(() => {});
+
+    const { getByText, getByPlaceholder, getByTestId } = render(<App />);
+
     // Create two projects for testing multiple timers
     await getByPlaceholder("New project's name").fill("Timer Test Project 1");
     await getByText("Add").click();
-    
+
     await getByPlaceholder("New project's name").fill("Timer Test Project 2");
     await getByText("Add").click();
-    
+
     // 1. Test starting, pausing, and resetting a timer
     // Navigate to first project
     await getByText("Timer Test Project 1").click();
-    
+
     // Verify initial timer state
     await expect.element(getByText("25:00")).toBeInTheDocument();
-    
+
     // Start the timer
     await getByText("Start").click();
-    
+
     // Advance time by 5 seconds
-    mockTime += 5000;
-    
+    // (execute the inteval 5 times)
+
     // Verify timer is counting down
     await expect.element(getByText("24:55")).toBeInTheDocument();
-    
+
     // Pause the timer
     await getByText("Pause").click();
-    
+
     // Advance time more
-    mockTime += 5000;
-    
+    // (execute the inteval 5 times)
+
     // Verify timer is paused (still shows the same time)
     await expect.element(getByText("24:55")).toBeInTheDocument();
-    
+
     // Reset the timer
     await getByText("Reset").click();
-    
+
     // Verify timer is reset
     await expect.element(getByText("25:00")).toBeInTheDocument();
-    
+
     // 2. Test custom timer duration
     // Click the edit button to configure timer
-    await getAllByText("")[0].click(); // This is the edit button with the icon
-    
+    await getByTestId("configure-timer")[0].click();
+
     // Set custom time to 10 minutes
     await getByPlaceholder("Time in minutes").fill("10");
     await getByText("Save").click();
-    
+
     // Verify timer shows 10 minutes
     await expect.element(getByText("10:00")).toBeInTheDocument();
-    
+
     // 3. Test partial time commit
     // Start the timer with custom duration
     await getByText("Start").click();
-    
+
     // Advance time by 3 minutes (180 seconds)
-    mockTime += 180000;
-    
+    // (execute the interval 180 times)
+
     // Pause the timer
     await getByText("Pause").click();
-    
+
     // Verify partial time commit option appears
-    await expect.element(getByText("Commit 3 minutes and reset timer?")).toBeInTheDocument();
-    
+    await expect
+      .element(getByText("Commit 3 minutes and reset timer?"))
+      .toBeInTheDocument();
+
     // Commit the partial time
     await getByText("Commit").click();
-    
+
     // 4. Test multiple timers running simultaneously
     // Navigate to second project
     await getByText("Timer Test Project 2").click();
-    
+
     // Start timer on second project
     await getByText("Start").click();
-    
+
     // Navigate back to first project
     await getByText("Timer Test Project 1").click();
-    
+
     // Start timer on first project again
     await getByText("Start").click();
-    
+
     // Advance time by 2 minutes
-    mockTime += 120000;
-    
+    // (execute the interval 120 times)
+
     // Verify both timers are running (check sidebar)
     await getByText("Timer Test Project 2").click();
     await expect.element(getByText("23:00")).toBeInTheDocument();
-    
+
     await getByText("Timer Test Project 1").click();
     await expect.element(getByText("23:00")).toBeInTheDocument();
-    
+
     // 5. Test automatic time commit when timer reaches zero
     // Configure a short timer (1 minute) for quick testing
-    await getAllByText("")[0].click(); // Edit button
+    await getByTestId("configure-timer").click();
     await getByPlaceholder("Time in minutes").fill("1");
     await getByText("Save").click();
-    
+
     // Start the timer
     await getByText("Start").click();
-    
+
     // Advance time by 1 minute to trigger auto-commit
-    mockTime += 60000;
-    
+    // (execute the interval 60 times)
+
     // Verify timer has reset after auto-commit
     await expect.element(getByText("00:00")).toBeInTheDocument();
-    
+
     // 6. Check commit history
     await getByText("Commit history").click();
-    
+
     // Verify our commits are in the history
     await expect.element(getByText(/3 minutes commited/)).toBeInTheDocument();
     await expect.element(getByText(/1 minute commited/)).toBeInTheDocument();
-    
+
     // Restore original functions
-    Date.now = originalDateNow;
     window.setTimeout = originalSetTimeout;
     window.setInterval = originalSetInterval;
   });
