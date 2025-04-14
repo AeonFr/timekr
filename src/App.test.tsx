@@ -89,7 +89,7 @@ describe("Timekr", () => {
     };
 
     vi.spyOn(window, "AudioContext").mockImplementation(
-      () => mockAudioContext as any,
+      () => mockAudioContext as unknown as AudioContext,
     );
     vi.spyOn(window, "confirm").mockReturnValue(true);
 
@@ -97,23 +97,23 @@ describe("Timekr", () => {
     const originalSetTimeout = window.setTimeout;
     vi.spyOn(window, "setTimeout").mockImplementation((fn) => {
       fn();
-      return 0 as any;
+      return 0 as unknown as number;
     });
 
     // Mock setInterval to capture callbacks but not execute them immediately
     const originalSetInterval = window.setInterval;
     let intervalCounter = 1;
-    const intervalCallbacks: Record<number, Function> = {};
+    const intervalCallbacks: Record<number, () => void> = {};
 
-    vi.spyOn(window, "setInterval").mockImplementation((fn, _interval) => {
+    vi.spyOn(window, "setInterval").mockImplementation((fn, _ms) => {
       const id = intervalCounter++;
-      intervalCallbacks[id] = fn as Function;
-      return id as any;
+      intervalCallbacks[id] = fn as () => void;
+      return id as unknown as number;
     });
 
     // Mock clearInterval to remove callbacks
-    vi.spyOn(window, "clearInterval").mockImplementation((id) => {
-      delete intervalCallbacks[id as number];
+    vi.spyOn(window, "clearInterval").mockImplementation((id: number) => {
+      delete intervalCallbacks[id];
     });
 
     // Helper function to execute interval callbacks a specific number of times

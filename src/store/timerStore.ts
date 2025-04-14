@@ -217,7 +217,7 @@ export const useTimerStore = create<TimerState>()((set, get) => ({
       try {
         const beep = () => {
           const context = new (window.AudioContext || 
-            (window as any).webkitAudioContext)();
+            (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
           const oscillator = context.createOscillator();
           oscillator.type = "square";
           oscillator.frequency.value = 830.6;
