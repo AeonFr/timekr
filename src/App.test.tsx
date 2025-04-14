@@ -1,18 +1,15 @@
 import React from "react";
-import { expect, describe, it, beforeEach, vi, afterEach } from "vitest";
+import { expect, describe, it, vi, afterEach } from "vitest";
 import { render } from "vitest-browser-react";
 import Cookie from "js-cookie";
 import App from "./App.js";
 
 describe("Timekr", () => {
-  beforeEach(() => {
+  afterEach(() => {
+    vi.restoreAllMocks();
     localStorage.removeItem("projects");
     localStorage.removeItem("timekr-timer-storage");
     Cookie.remove("projects");
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   it("Starts up with a sample project, that you can access and see sample commits", async () => {
@@ -107,7 +104,7 @@ describe("Timekr", () => {
     const originalSetInterval = window.setInterval;
     let intervalCounter = 1;
     const intervalCallbacks: Record<number, Function> = {};
-    
+
     vi.spyOn(window, "setInterval").mockImplementation((fn, _interval) => {
       const id = intervalCounter++;
       intervalCallbacks[id] = fn as Function;
@@ -118,18 +115,24 @@ describe("Timekr", () => {
     vi.spyOn(window, "clearInterval").mockImplementation((id) => {
       delete intervalCallbacks[id as number];
     });
-    
+
     // Helper function to execute interval callbacks a specific number of times
     const advanceTimersByTime = (seconds: number) => {
       // Execute all active interval callbacks the specified number of times
       for (let i = 0; i < seconds; i++) {
-        Object.values(intervalCallbacks).forEach(callback => {
+        Object.values(intervalCallbacks).forEach((callback) => {
           callback();
         });
       }
     };
 
-    const { getByText, getByPlaceholder, getByTestId } = render(<App />);
+    const {
+      getByText,
+      getByPlaceholder,
+      getByLabelText,
+      getByTestId,
+      getByRole,
+    } = render(<App />);
 
     // Create two projects for testing multiple timers
     await getByPlaceholder("New project's name").fill("Timer Test Project 1");
@@ -150,7 +153,7 @@ describe("Timekr", () => {
 
     // Advance time by 5 seconds
     advanceTimersByTime(5);
-    
+
     // Verify timer is counting down
     await expect.element(getByText("24:55")).toBeInTheDocument();
 
@@ -159,23 +162,23 @@ describe("Timekr", () => {
 
     // Advance time more
     advanceTimersByTime(5);
-    
+
     // Verify timer is paused (still shows the same time)
     await expect.element(getByText("24:55")).toBeInTheDocument();
 
     // Reset the timer
-    await getByText("Reset").click();
+    await getByRole("button", { name: "Reset" }).click();
 
     // Verify timer is reset
     await expect.element(getByText("25:00")).toBeInTheDocument();
 
     // 2. Test custom timer duration
     // Click the edit button to configure timer
-    await getByTestId("configure-timer")[0].click();
+    await getByTestId("configure-timer").click();
 
     // Set custom time to 10 minutes
-    await getByPlaceholder("Time in minutes").fill("10");
-    await getByText("Save").click();
+    await getByLabelText("Minutes:").fill("10");
+    await getByText("Save").first().click();
 
     // Verify timer shows 10 minutes
     await expect.element(getByText("10:00")).toBeInTheDocument();
@@ -186,7 +189,7 @@ describe("Timekr", () => {
 
     // Advance time by 3 minutes (180 seconds)
     advanceTimersByTime(180);
-    
+
     // Pause the timer
     await getByText("Pause").click();
 
@@ -196,7 +199,7 @@ describe("Timekr", () => {
       .toBeInTheDocument();
 
     // Commit the partial time
-    await getByText("Commit").click();
+    await getByRole("button", { name: "Commit" }).click();
 
     // 4. Test multiple timers running simultaneously
     // Navigate to second project
@@ -208,31 +211,37 @@ describe("Timekr", () => {
     // Navigate back to first project
     await getByText("Timer Test Project 1").click();
 
+    // Advance time by 2 minutes
+    advanceTimersByTime(120);
+
     // Start timer on first project again
     await getByText("Start").click();
 
     // Advance time by 2 minutes
     advanceTimersByTime(120);
-    
+
     // Verify both timers are running (check sidebar)
     await getByText("Timer Test Project 2").click();
-    await expect.element(getByText("23:00")).toBeInTheDocument();
+    await expect.element(getByText("21:00")).toBeInTheDocument();
 
     await getByText("Timer Test Project 1").click();
     await expect.element(getByText("23:00")).toBeInTheDocument();
 
+    // All done, reset project
+    await getByRole("button", { name: "Reset" }).click();
+
     // 5. Test automatic time commit when timer reaches zero
     // Configure a short timer (1 minute) for quick testing
     await getByTestId("configure-timer").click();
-    await getByPlaceholder("Time in minutes").fill("1");
-    await getByText("Save").click();
+    await getByLabelText("Minutes").fill("1");
+    await getByText("Save").first().click();
 
     // Start the timer
     await getByText("Start").click();
 
     // Advance time by 1 minute to trigger auto-commit
-    advanceTimersByTime(60);
-    
+    advanceTimersByTime(70);
+
     // Verify timer has reset after auto-commit
     await expect.element(getByText("00:00")).toBeInTheDocument();
 

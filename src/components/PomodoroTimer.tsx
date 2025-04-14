@@ -14,7 +14,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
 }) => {
   const { startTimer, stopTimer, resetTimer, getTimerState, setCustomTime } =
     useTimerStore();
-  const { time, timerStopped, partialTimeCommited } =
+  const { time, timerStopped, partialTimeCommited, initialTime } =
     getTimerState(projectSlug);
 
   // Format time with leading zeros
@@ -29,7 +29,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
   // Check if timer reached zero
   useEffect(() => {
     if (time === 0 && !timerStopped) {
-      commitOnePomodoro();
+      commitTime(initialTime || 25);
     }
   }, [time, timerStopped]);
 
@@ -77,8 +77,8 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
   };
 
   // Commit functions
-  const commitOnePomodoro = () => {
-    onCommitTime({ amount: 25 });
+  const commitTime = (amount: number) => {
+    onCommitTime({ amount });
 
     // Audio Effect
     beep();
