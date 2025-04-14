@@ -26,33 +26,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
     time % 60,
   )}`;
 
-  // Check if timer reached zero
-  useEffect(() => {
-    if (time === 0 && !timerStopped) {
-      commitTime(initialTime || 25);
-    }
-  }, [time, timerStopped]);
-
-  // Audio beep function
-  const beep = () => {
-    const context = new (window.AudioContext ||
-      (window as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext)();
-    const oscillator = context.createOscillator();
-    oscillator.type = "square";
-    oscillator.frequency.value = 830.6;
-    const gain = context.createGain();
-    oscillator.connect(gain);
-    gain.connect(context.destination);
-    oscillator.start(0);
-
-    setTimeout(() => {
-      gain.gain.exponentialRampToValueAtTime(
-        0.00001,
-        context.currentTime + 0.04,
-      );
-    }, 500);
-  };
+  // No need to check if timer reached zero anymore as it's handled in the store
 
   // Timer control functions
   const handleStartTimer = () => {
@@ -77,25 +51,10 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
   };
 
   // Commit functions
-  const commitTime = (amount: number) => {
-    onCommitTime({ amount });
-
-    // Audio Effect
-    beep();
-    const interval = 800;
-    setTimeout(() => {
-      beep();
-      setTimeout(() => {
-        beep();
-        setTimeout(beep, interval);
-      }, interval);
-    }, interval);
-  };
-
   const commitPartialTime = (e: React.FormEvent) => {
     e.preventDefault();
     if (partialTimeCommited !== false) {
-      onCommitTime({ amount: partialTimeCommited });
+      useTimerStore.getState().commitTime(projectSlug, partialTimeCommited);
       resetTimer(projectSlug);
     }
   };

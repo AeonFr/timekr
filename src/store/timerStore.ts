@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import useStore from "../store";
 
 interface TimerState {
   timers: Record<
@@ -22,6 +23,7 @@ interface TimerState {
   };
   cleanupTimers: () => void;
   setCustomTime: (projectSlug: string, minutes: number) => void;
+  commitTime: (projectSlug: string, amount: number | string) => void;
 }
 
 export const useTimerStore = create<TimerState>()((set, get) => ({
@@ -53,6 +55,7 @@ export const useTimerStore = create<TimerState>()((set, get) => ({
       const timer = timers[projectSlug];
 
       if (timer && !timer.timerStopped && timer.time > 0) {
+        // Decrement the timer
         set({
           timers: {
             ...timers,
@@ -63,6 +66,16 @@ export const useTimerStore = create<TimerState>()((set, get) => ({
             },
           },
         });
+        
+        // Check if timer reached zero after decrementing
+        if (timer.time - 1 === 0) {
+          // Timer reached zero, commit the time
+          const minutesToCommit = Math.round(timer.initialTime / 60);
+          store.commitTime(projectSlug, minutesToCommit);
+          
+          // Stop the timer
+          store.stopTimer(projectSlug);
+        }
       }
     }, 1000);
 
@@ -190,6 +203,51 @@ export const useTimerStore = create<TimerState>()((set, get) => ({
         },
       },
     });
+  },
+  
+  commitTime: (projectSlug: string, amount: number | string) => {
+    // Get the commitTime function from the main store
+    const mainStore = useStore.getState();
+    
+    // Commit the time to the project
+    mainStore.commitTime(projectSlug, amount);
+    
+    // Play sound effect (this will only work if the page is active)
+    if (typeof window !== "undefined") {
+      try {
+        const beep = () => {
+          const context = new (window.AudioContext || 
+            (window as any).webkitAudioContext)();
+          const oscillator = context.createOscillator();
+          oscillator.type = "square";
+          oscillator.frequency.value = 830.6;
+          const gain = context.createGain();
+          oscillator.connect(gain);
+          gain.connect(context.destination);
+          oscillator.start(0);
+
+          setTimeout(() => {
+            gain.gain.exponentialRampToValueAtTime(
+              0.00001,
+              context.currentTime + 0.04,
+            );
+          }, 500);
+        };
+
+        // Play beep sound pattern
+        beep();
+        const interval = 800;
+        setTimeout(() => {
+          beep();
+          setTimeout(() => {
+            beep();
+            setTimeout(beep, interval);
+          }, interval);
+        }, interval);
+      } catch (e) {
+        console.error("Failed to play sound:", e);
+      }
+    }
   },
 }));
 
