@@ -96,6 +96,7 @@ describe("Timekr", () => {
     // Mock setTimeout to execute immediately
     const originalSetTimeout = window.setTimeout;
     vi.spyOn(window, "setTimeout").mockImplementation((fn) => {
+      // @ts-expect-error not gonna botter typing this
       fn();
       return 0 as unknown as number;
     });
@@ -105,16 +106,18 @@ describe("Timekr", () => {
     let intervalCounter = 1;
     const intervalCallbacks: Record<number, () => void> = {};
 
-    vi.spyOn(window, "setInterval").mockImplementation((fn, _ms) => {
+    vi.spyOn(window, "setInterval").mockImplementation((fn) => {
       const id = intervalCounter++;
       intervalCallbacks[id] = fn as () => void;
       return id as unknown as number;
     });
 
     // Mock clearInterval to remove callbacks
-    vi.spyOn(window, "clearInterval").mockImplementation((id: number) => {
-      delete intervalCallbacks[id];
-    });
+    vi.spyOn(window, "clearInterval").mockImplementation(
+      (id: number | undefined) => {
+        delete intervalCallbacks[id!];
+      },
+    );
 
     // Helper function to execute interval callbacks a specific number of times
     const advanceTimersByTime = (seconds: number) => {
