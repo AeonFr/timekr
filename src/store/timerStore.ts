@@ -6,6 +6,7 @@ interface TimerState {
     string,
     {
       time: number;
+      initialTime: number;
       timerStopped: boolean;
       lastUpdated: number;
       intervalId?: number;
@@ -16,6 +17,7 @@ interface TimerState {
   resetTimer: (projectSlug: string) => void;
   getTimerState: (projectSlug: string) => {
     time: number;
+    initialTime: number;
     timerStopped: boolean;
     partialTimeCommited: number | false;
   };
@@ -141,18 +143,24 @@ export const useTimerStore = create<TimerState>()(
         const timers = get().timers;
         const currentTimer = timers[projectSlug] || {
           time: 1500,
+          initialTime: 1500,
           timerStopped: true,
           lastUpdated: Date.now(),
         };
 
         // Calculate partial time committed (minutes spent)
         const partialTimeCommited =
-          currentTimer.timerStopped && currentTimer.time < 1500
-            ? Math.max(1, Math.round((1500 - currentTimer.time) / 60))
+          currentTimer.timerStopped &&
+          currentTimer.time < currentTimer.initialTime
+            ? Math.max(
+                1,
+                Math.round((currentTimer.initialTime - currentTimer.time) / 60),
+              )
             : false;
 
         return {
           time: currentTimer.time,
+          initialTime: currentTimer.initialTime,
           timerStopped: currentTimer.timerStopped,
           partialTimeCommited,
         };
@@ -168,24 +176,26 @@ export const useTimerStore = create<TimerState>()(
           }
         });
       },
-      
+
       setCustomTime: (projectSlug: string, minutes: number) => {
         const timers = get().timers;
         const currentTimer = timers[projectSlug] || {
           time: 1500,
+          initialTime: 1500,
           timerStopped: true,
           lastUpdated: Date.now(),
         };
-        
+
         // Convert minutes to seconds
         const timeInSeconds = minutes * 60;
-        
+
         set({
           timers: {
             ...timers,
             [projectSlug]: {
               ...currentTimer,
               time: timeInSeconds,
+              initialTime: timeInSeconds,
               timerStopped: true,
               lastUpdated: Date.now(),
             },
@@ -217,21 +227,22 @@ if (typeof window !== "undefined") {
   window.addEventListener("beforeunload", (event) => {
     const state = useTimerStore.getState();
     const timers = state.timers;
-    
+
     // Check if any timer is running
     const anyTimerRunning = Object.values(timers).some(
-      timer => !timer.timerStopped && timer.time > 0
+      (timer) => !timer.timerStopped && timer.time > 0,
     );
-    
+
     // If any timer is running, show confirmation dialog
     if (anyTimerRunning) {
       // Standard way to show confirmation dialog
-      const message = "You have timers running. Are you sure you want to leave?";
+      const message =
+        "You have timers running. Are you sure you want to leave?";
       event.preventDefault();
       event.returnValue = message; // For older browsers
       return message;
     }
-    
+
     // Always clean up timers
     state.cleanupTimers();
   });

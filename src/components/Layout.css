@@ -73,6 +73,10 @@ p {
   border-bottom-color: transparent !important;
 }
 
+.btn-icon {
+  @apply px-2;
+}
+
 .input {
   @apply text-grey-darkest appearance-none bg-transparent w-full py-1 px-2 leading-tight;
 }

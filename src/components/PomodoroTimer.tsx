@@ -12,7 +12,8 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
   onCommitTime,
   projectSlug,
 }) => {
-  const { startTimer, stopTimer, resetTimer, getTimerState, setCustomTime } = useTimerStore();
+  const { startTimer, stopTimer, resetTimer, getTimerState, setCustomTime } =
+    useTimerStore();
   const { time, timerStopped, partialTimeCommited } =
     getTimerState(projectSlug);
 
@@ -114,7 +115,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
     if (customTimeConfig !== null) {
       // Use the store method to set custom time
       setCustomTime(projectSlug, customTimeConfig);
-      
+
       // Close the custom time form
       setCustomTimeConfig(null);
     }
@@ -132,17 +133,20 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
       <div className="flex p-4">
         <div className="m:inline-block mb-4 m:mb-0 px-4 text-3xl text-1 font-mono mr-auto">
           {prettyTime}
-        </div>
 
-        {timerStopped && !partialTimeCommited && (
-          <button
-            type="button"
-            className="btn btn-default align-top"
-            onClick={toggleCustomTimeConfig}
-          >
-            Configure
-          </button>
-        )}
+          {timerStopped &&
+            !partialTimeCommited &&
+            customTimeConfig === null && (
+              <button
+                type="button"
+                className="btn btn-default btn-icon ml-2 align-top text-sm"
+                onClick={toggleCustomTimeConfig}
+                aria-label="Configure timer"
+              >
+                <Icon name="edit-3" className="w-4 h-4" />
+              </button>
+            )}
+        </div>
 
         <button
           type="button"
@@ -186,36 +190,28 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
       )}
 
       {customTimeConfig !== null && !partialTimeCommited && (
-        <form 
+        <form
           className="m:flex items-center p-4 show-ltr"
           onSubmit={(e) => {
             e.preventDefault();
             saveCustomTime();
           }}
         >
-          <div className="flex-grow">
-            <label className="block text-sm mb-1">Set timer duration (minutes):</label>
-            <TimeInput
-              value={customTimeConfig}
-              onChange={(value) => setCustomTimeConfig(value)}
-            />
-          </div>
-          <div className="ml-auto mt-2">
-            <button 
-              type="button" 
-              className="btn btn-default mr-2"
-              onClick={() => setCustomTimeConfig(null)}
-            >
-              Cancel
-            </button>
-            <button 
-              type="submit" 
-              className="btn btn-primary"
-            >
-              <Icon name="save" className="w-4 h-4 mr-1" />
-              Save
-            </button>
-          </div>
+          <TimeInput
+            value={customTimeConfig}
+            onChange={(value) => setCustomTimeConfig(value)}
+          />
+          <button
+            type="button"
+            className="btn btn-default ml-auto"
+            onClick={() => setCustomTimeConfig(null)}
+          >
+            Cancel
+          </button>
+          <button type="submit" className="btn btn-primary ml-auto">
+            <Icon name="save" className="w-4 h-4 mr-1" />
+            Save
+          </button>
         </form>
       )}
     </section>
