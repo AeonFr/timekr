@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useParams, useNavigate } from "react-router";
+import { Link, useParams, useNavigate, useLocation } from "react-router";
 import useStore from "../../store";
 import { useTimerStore } from "../../store/timerStore";
 import Icon from "../Icon";
@@ -9,6 +9,7 @@ const List: React.FC = () => {
   const [invalidProjectName, setInvalidProjectName] = useState(0);
   const { slug } = useParams<{ slug?: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const projects = useStore((state) => state.projects);
   const addProject = useStore((state) => state.addProject);
@@ -54,7 +55,11 @@ const List: React.FC = () => {
               <div className="flex justify-between items-center">
                 <span>{project.name}</span>
                 {(() => {
-                  if (projectSlug === slug) return null;
+                  if (
+                    location.pathname ===
+                    `/project/${encodeURIComponent(projectSlug)}`
+                  )
+                    return null;
                   const { time, timerStopped } = getTimerState(projectSlug);
                   if (!timerStopped && time > 0) {
                     return (
