@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router";
 import useStore from "../../store";
+import { useTimerStore } from "../../store/timerStore";
 import Icon from "../Icon";
 
 const List: React.FC = () => {
@@ -11,6 +12,12 @@ const List: React.FC = () => {
 
   const projects = useStore((state) => state.projects);
   const addProject = useStore((state) => state.addProject);
+  const { getTimerState } = useTimerStore();
+  
+  // Helper function to format time with leading zeros
+  const twoDigits = (num: number): string => {
+    return ("0" + num).slice(-2);
+  };
 
   const handleSubmitProject = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +51,20 @@ const List: React.FC = () => {
                 projectSlug === slug ? "border-l-2 border-blue" : ""
               }`}
             >
-              {project.name}
+              <div className="flex justify-between items-center">
+                <span>{project.name}</span>
+                {(() => {
+                  const { time, timerStopped } = getTimerState(projectSlug);
+                  if (!timerStopped && time > 0) {
+                    return (
+                      <span className="font-mono text-sm bg-gray-700 text-white px-2 py-1 rounded">
+                        {twoDigits(Math.floor(time / 60))}:{twoDigits(time % 60)}
+                      </span>
+                    );
+                  }
+                  return null;
+                })()}
+              </div>
             </Link>
           </li>
         ))}
