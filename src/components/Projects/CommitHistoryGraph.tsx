@@ -24,7 +24,9 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
   totalTime = 0,
 }) => {
   const [viewType, setViewType] = useState<string>("Per day");
-  const [visibleWeeks, setVisibleWeeks] = useState<number>(6);
+  const [visibleWeeks, setVisibleWeeks] = useState<number>(
+    window.innerWidth < 840 ? 4 : 6,
+  );
   const graphRef = useRef<HTMLDivElement>(null);
   // Find the earliest commit date or use current date if no commits
   const startOfProject = useMemo(() => {
@@ -56,21 +58,19 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
   // Update visible weeks based on screen width
   useEffect(() => {
     const handleResize = () => {
-      if (graphRef.current) {
-        const width = graphRef.current.clientWidth;
-        setVisibleWeeks(width < 840 ? 4 : 6);
-      }
+      const width = window.innerWidth;
+      setVisibleWeeks(width < 840 ? 4 : 6);
     };
 
     // Initial check
     handleResize();
 
     // Add event listener
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     // Cleanup
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -209,7 +209,8 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
         const easeProgress = 1 - Math.pow(1 - progress, 2);
 
         const currentX = startValue - (startValue - endValue) * easeProgress;
-        const currentWidth = (baseWidth + 10) - ((baseWidth + 10) - baseWidth) * easeProgress;
+        const currentWidth =
+          baseWidth + 10 - (baseWidth + 10 - baseWidth) * easeProgress;
 
         setAnimatedViewBox(`${currentX} 0 ${currentWidth} 90`);
 
@@ -235,7 +236,8 @@ const CommitHistoryGraph: React.FC<CommitHistoryGraphProps> = ({
         const easeProgress = 1 - Math.pow(1 - progress, 2);
 
         const currentX = startValue + (endValue - startValue) * easeProgress;
-        const currentWidth = baseWidth + (baseWidth + 10 - baseWidth) * easeProgress;
+        const currentWidth =
+          baseWidth + (baseWidth + 10 - baseWidth) * easeProgress;
 
         setAnimatedViewBox(`${currentX} 0 ${currentWidth} 90`);
 
