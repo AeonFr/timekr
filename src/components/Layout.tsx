@@ -11,8 +11,13 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [darkInterface, setDarkInterface] = useState("0");
+  const prefersDarkLocalstorage = localStorage.getItem("prefers-dark");
+  const [darkInterface, setDarkInterface] = useState(
+    prefersDarkLocalstorage ?? (prefersDark ? "1" : "0"),
+  );
   const [showImportForm, setShowImportForm] = useState(false);
   const [cookieConsentAccepted, setCookieConsentAccepted] = useState(
     localStorage.getItem("cookie_consent") || false,
@@ -23,14 +28,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const projects = useStore((state) => state.projects);
   const importProjects = useStore((state) => state.importProjects);
 
-  // Apply dark interface effect and reset menu on navigation
+  // Apply dark interface effect
   useEffect(() => {
     if (darkInterface === "1") {
       document.body.classList.add("dark-interface");
+      localStorage.setItem("prefers-dark", "1");
     } else {
       document.body.classList.remove("dark-interface");
+      localStorage.setItem("prefers-dark", "0");
     }
-  }, [darkInterface, pathname]);
+  }, [darkInterface]);
 
   const handleDarkInterfaceChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -185,17 +192,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {!cookieConsentAccepted && (
         <div className="border p-4 my-4 rounded-lg leading-normal show-ltr">
-          This site uses both Cookies and <code>localStorage</code> to store
-          your user data (it should be safe unless you decide to clear your
-          cache). Any data you provide is saved on your current browser and
-          device <em>only</em>. The server doesn't store any data whatsoever, so
-          you're adviced to keep regular backups using the Export function.
-          <button
-            className="btn btn-primary mt-2"
-            onClick={acceptCookieConsent}
-          >
-            I understand
-          </button>
+          This site stores data only in your browser (localStorage, cookies).
+          Everything is stored locally and never sent to any server.
+          <div>
+            <button
+              className="btn btn-primary mt-2"
+              onClick={acceptCookieConsent}
+            >
+              I understand
+            </button>
+          </div>
         </div>
       )}
     </section>

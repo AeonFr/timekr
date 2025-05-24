@@ -15,16 +15,14 @@ const Switch: React.FC<SwitchProps> = ({
 }) => {
   return (
     <div
-      className={`inline-flex border-grey-light border rounded overflow-hidden ${className}`}
+      className={`inline-flex border border-1 border rounded overflow-hidden ${className}`}
     >
       {options.map((option) => (
         <button
           key={option}
           type="button"
           className={`cursor-default px-2 py-1 text-xs tracking-wide uppercase ${
-            value === option
-              ? "text-blue bg-blue-lightest"
-              : "text-gray-darker hover:bg-grey-lighter"
+            value === option ? "text-blue bg-1" : "text-1 hover:bg-2"
           }`}
           onClick={() => onChange(option)}
         >

@@ -120,6 +120,14 @@ p {
   @apply text-grey;
 }
 
+.border-1 {
+  @apply border-grey-light;
+}
+
+.dark-interface .border-1 {
+  @apply border-grey-darkest;
+}
+
 .childs-animated > * > *,
 .show-ltr {
   --delay-increm: 0.03s;
